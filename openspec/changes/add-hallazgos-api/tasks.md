@@ -4,10 +4,10 @@ Solo se editan `backend/` y `scripts/`. Lo que haga falta de otras carpetas va e
 
 ## 1. Hito 1 (10:15) — corre solo con mocks
 
-- [ ] 1.1 Completar `backend/schema.sql` (tablas `vuelos` y `hallazgos`, `CREATE TABLE IF NOT EXISTS`); verificar aplicándolo dos veces con `sqlite3 data/eagle.db < backend/schema.sql` sin errores
-- [ ] 1.2 Al arrancar `backend/api.py`: crear `data/`, aplicar el schema y abrir un vuelo; verificar con `uv run uvicorn backend.api:app --port 8000` sobre una carpeta `data/` vacía
-- [ ] 1.3 Implementar `scripts/seed.py` (con `--reset`) validando contra el schema; verificar que carga 6 filas con `sqlite3 data/eagle.db "select count(*) from hallazgos"`
-- [ ] 1.4 Implementar `GET /hallazgos` (orden descendente, `limit` 1–100); verificar con `curl localhost:8000/hallazgos?limit=3` que la forma coincide con `contracts/fixtures/hallazgos.sample.json`
+- [x] 1.1 Completar `backend/schema.sql` (tablas `vuelos` y `hallazgos`, `CREATE TABLE IF NOT EXISTS`); verificar aplicándolo dos veces con `sqlite3 data/eagle.db < backend/schema.sql` sin errores
+- [x] 1.2 Al arrancar `backend/api.py`: crear `data/`, aplicar el schema y abrir un vuelo; verificar con `uv run uvicorn backend.api:app --port 8000` sobre una carpeta `data/` vacía
+- [x] 1.3 Implementar `scripts/seed.py` (con `--reset`) validando contra el schema; verificar que carga 6 filas con `sqlite3 data/eagle.db "select count(*) from hallazgos"`
+- [x] 1.4 Implementar `GET /hallazgos` (orden descendente, `limit` 1–100); verificar con `curl localhost:8000/hallazgos?limit=3` que la forma coincide con `contracts/fixtures/hallazgos.sample.json`
 
 ## 2. Hito 2 (11:00) — se conecta con el contrato real
 
