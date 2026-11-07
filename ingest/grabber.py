@@ -17,8 +17,10 @@ Uso:
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import time
+from datetime import datetime
 from pathlib import Path
 
 import cv2
@@ -83,18 +85,41 @@ def siguiente_numero() -> int:
     return max(numeros, default=0) + 1
 
 
+def escribir_estado(estado_stream: str, ultimo_frame_ts: str | None) -> None:
+    """Escribe data/estado.json de forma atómica (temporal + os.replace).
+
+    Forma (contracts/api.md): {"estado_stream": "en_vivo"|"sin_senal",
+    "ultimo_frame_ts": "<ISO 8601>"|null}.
+    """
+    DATA.mkdir(parents=True, exist_ok=True)
+    payload = {"estado_stream": estado_stream, "ultimo_frame_ts": ultimo_frame_ts}
+    tmp = ESTADO.with_suffix(".tmp.json")
+    tmp.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+    os.replace(tmp, ESTADO)
+
+
 def loop(url: str, intervalo_s: float) -> None:
     """Bucle principal.
 
     - cv2.VideoCapture(url); si no abre o se cae, reintenta cada REINTENTO_S sin morir.
     - Lee frames continuamente (para no acumular buffer) y guarda 1 cada `intervalo_s`.
-    - El estado.json (Hito 2) lo maneja escribir_estado; aquí solo se guardan frames.
+    - Escribe estado.json en cada iteración: "sin_senal" si pasaron más de
+      TIMEOUT_SIN_SENAL_S desde el último frame guardado, si no "en_vivo".
     """
     FRAMES.mkdir(parents=True, exist_ok=True)
     numero = siguiente_numero()
-    ultimo_guardado = 0.0
+    ultimo_guardado_mono = 0.0  # time.monotonic() del último frame; 0 = aún ninguno
+    ultimo_frame_ts: str | None = None  # ISO 8601 del último frame
     cap = None
     print(f"Grabber: leyendo {url}, 1 frame cada {intervalo_s}s. Ctrl+C para parar.")
+    escribir_estado("sin_senal", None)
+
+    def actualizar_estado() -> None:
+        sin_frames = ultimo_guardado_mono == 0.0
+        vencido = (time.monotonic() - ultimo_guardado_mono) > TIMEOUT_SIN_SENAL_S
+        estado = "sin_senal" if (sin_frames or vencido) else "en_vivo"
+        escribir_estado(estado, ultimo_frame_ts)
+
     try:
         while True:
             if cap is None or not cap.isOpened():
@@ -102,6 +127,7 @@ def loop(url: str, intervalo_s: float) -> None:
                     cap.release()
                 cap = cv2.VideoCapture(url)
                 if not cap.isOpened():
+                    actualizar_estado()
                     print(f"Sin stream en {url}; reintento en {REINTENTO_S}s…")
                     time.sleep(REINTENTO_S)
                     continue
@@ -111,26 +137,23 @@ def loop(url: str, intervalo_s: float) -> None:
                 print("Lectura fallida; libero la captura y reintento…")
                 cap.release()
                 cap = None
+                actualizar_estado()
                 time.sleep(REINTENTO_S)
                 continue
 
             ahora = time.monotonic()
-            if ahora - ultimo_guardado >= intervalo_s:
+            if ahora - ultimo_guardado_mono >= intervalo_s:
                 destino = guardar_frame(frame, numero)
+                ultimo_frame_ts = datetime.now().astimezone().isoformat(timespec="seconds")
                 print(f"  guardado {destino.name}")
                 numero += 1
-                ultimo_guardado = ahora
+                ultimo_guardado_mono = ahora
+            actualizar_estado()
     except KeyboardInterrupt:
         print("\nGrabber detenido.")
     finally:
         if cap is not None:
             cap.release()
-
-
-def escribir_estado(estado_stream: str, ultimo_frame_ts: str | None) -> None:
-    """Escribe data/estado.json (atómico)."""
-    # TODO(cesar): Hito 2 (T2.2) — integrar en el loop con transición a sin_senal.
-    raise NotImplementedError
 
 
 def main() -> None:

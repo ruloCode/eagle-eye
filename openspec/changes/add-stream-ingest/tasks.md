@@ -12,11 +12,11 @@ Solo se editan `ingest/` y `scripts/`. Lo que haga falta de otras carpetas va en
 
 ## 2. Hito 2 (11:00) — se conecta con el contrato real
 
-- [ ] 2.1 Escritura atómica de `data/frames/latest.jpg` (temporal + `os.replace`); verificar abriendo `latest.jpg` en bucle mientras corre el grabber sin errores de JPG truncado
-- [ ] 2.2 Implementar `escribir_estado` con `estado_stream` y `ultimo_frame_ts` (ISO 8601); verificar que `data/estado.json` coincide con `contracts/api.md`
-- [ ] 2.3 Paso a `sin_senal`: cortar `replay.sh` y verificar que `estado.json` cambia en ≤ 10 s y el grabber sigue vivo
-- [ ] 2.4 Reconexión: volver a lanzar `replay.sh` y verificar que el estado vuelve a `en_vivo` sin reiniciar el grabber
-- [ ] 2.5 Probar con el dron real: DJI Fly → RTMP a la IP del portátil; anotar en `ingest/README.md` la IP/red usada y la latencia observada
+- [x] 2.1 Escritura atómica de `data/frames/latest.jpg` (temporal + `os.replace`); verificar abriendo `latest.jpg` en bucle mientras corre el grabber sin errores de JPG truncado
+- [x] 2.2 Implementar `escribir_estado` con `estado_stream` y `ultimo_frame_ts` (ISO 8601); verificar que `data/estado.json` coincide con `contracts/api.md`
+- [x] 2.3 Paso a `sin_senal`: cortar `replay.sh` y verificar que `estado.json` cambia en ≤ 10 s y el grabber sigue vivo
+- [x] 2.4 Reconexión: volver a lanzar `replay.sh` y verificar que el estado vuelve a `en_vivo` sin reiniciar el grabber
+- [ ] 2.5 Probar con el dron real: DJI Fly → RTMP a la IP del portátil; anotar en `ingest/README.md` la IP/red usada y la latencia observada — BLOQUEADA: requiere el dron físico. El pipeline quedó validado con replay.sh (plan B), que alimenta el mismo RTMP.
 
 ## 3. Hito 3 (11:50) — integración de punta a punta y pulido
 
