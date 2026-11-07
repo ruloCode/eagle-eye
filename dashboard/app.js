@@ -75,8 +75,8 @@ function pintarFrame(estado, hallazgos) {
   $("hud-tipo").textContent = ultimo ? ultimo.tipo.toUpperCase() : "";
   $("hud-ruta").textContent = ruta ?? VACIO;
   $("txt-placeholder").textContent = MOCK
-    ? "Modo prueba · sin imágenes reales"
-    : ruta ? "Imagen no disponible" : "Esperando frame del dron";
+    ? "Cero puntos ciegos · datos de prueba"
+    : ruta ? "Cero puntos ciegos" : "Esperando frame del dron…";
 
   if (src === srcActual) return;
   srcActual = src;
