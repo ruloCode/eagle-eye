@@ -1,0 +1,74 @@
+[
+  {
+    "id": 6,
+    "hora": "10:47:32",
+    "imagen": "frames/0246.jpg",
+    "tipo": "personas",
+    "severidad": "alta",
+    "personas": 58,
+    "pct_estres": null,
+    "descripcion": "Aglomeración densa junto a la entrada norte; el grupo bloquea el paso peatonal.",
+    "recomendacion": "Abrir acceso alterno y enviar personal de apoyo a la entrada norte.",
+    "costo_usd": 0.0184
+  },
+  {
+    "id": 5,
+    "hora": "10:46:12",
+    "imagen": "frames/0226.jpg",
+    "tipo": "cultivo",
+    "severidad": "alta",
+    "pct_estres": 37.4,
+    "personas": null,
+    "descripcion": "Franja amarilla extensa en el lote este, compatible con estrés hídrico o falla de riego.",
+    "recomendacion": "Revisar goteo del lote este hoy mismo.",
+    "costo_usd": 0.0271
+  },
+  {
+    "id": 4,
+    "hora": "10:44:56",
+    "imagen": "frames/0207.jpg",
+    "tipo": "personas",
+    "severidad": "media",
+    "personas": 23,
+    "pct_estres": null,
+    "descripcion": "Grupo mediano en la zona de parqueo, flujo constante hacia la salida.",
+    "recomendacion": "Monitorear; reevaluar si supera 40 personas.",
+    "costo_usd": 0.0162
+  },
+  {
+    "id": 3,
+    "hora": "10:43:20",
+    "imagen": "frames/0183.jpg",
+    "tipo": "cultivo",
+    "severidad": "media",
+    "pct_estres": 14.8,
+    "personas": null,
+    "descripcion": "Parches dispersos de baja vigencia y dos huecos de siembra en las hileras centrales.",
+    "recomendacion": "Inspección a pie de hileras centrales y resiembra.",
+    "costo_usd": 0.0249
+  },
+  {
+    "id": 2,
+    "hora": "10:41:48",
+    "imagen": "frames/0160.jpg",
+    "tipo": "personas",
+    "severidad": "baja",
+    "personas": 4,
+    "pct_estres": null,
+    "descripcion": "Cuatro personas caminando por el sendero perimetral, sin concentración.",
+    "recomendacion": "Sin acción.",
+    "costo_usd": 0.0149
+  },
+  {
+    "id": 1,
+    "hora": "10:40:12",
+    "imagen": "frames/0136.jpg",
+    "tipo": "cultivo",
+    "severidad": "baja",
+    "pct_estres": 3.2,
+    "personas": null,
+    "descripcion": "Cobertura verde uniforme; maleza puntual en el borde sur del lote.",
+    "recomendacion": "Sin acción urgente; control de maleza en borde sur.",
+    "costo_usd": 0.0233
+  }
+]

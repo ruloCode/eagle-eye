@@ -1,0 +1,39 @@
+/* Eagle Eye — dashboard. Dueña: Daniela.
+   Tema oscuro, 16:9, sin scroll. */
+
+:root {
+  /* TODO(daniela): paleta final */
+  --bg: #0b0f14;
+  --panel: #131a22;
+  --texto: #e6edf3;
+  --texto-suave: #8b98a5;
+  --ok: #3fb950;      /* severidad baja  */
+  --alerta: #d29922;  /* severidad media */
+  --peligro: #f85149; /* severidad alta  */
+  --gap: 16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden; /* sin scroll */
+  background: var(--bg);
+  color: var(--texto);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* TODO(daniela): layout. Sugerencia de grid:
+   header arriba a todo el ancho; frame ~60% a la izquierda;
+   tarjetas + feed a la derecha; el feed con overflow interno, nunca la página. */
+.app {
+  height: 100vh;
+  display: grid;
+  gap: var(--gap);
+  padding: var(--gap);
+}
+
+.header {}
+.frame {}
+.tarjetas {}
+.feed {}

@@ -1,0 +1,26 @@
+# Configuración mínima de MediaMTX para Eagle Eye.
+# Dueño: César.
+#
+# Instalar: brew install mediamtx   (o binario de https://github.com/bluenviron/mediamtx/releases)
+# Correr:   mediamtx ingest/mediamtx.yml
+#
+# DJI Fly (o scripts/replay.sh) publica en:  rtmp://<IP-del-portátil>:1935/live/dron
+# El grabber lee de:                          rtmp://localhost:1935/live/dron
+
+# TODO(cesar): verificar estas claves con la versión instalada (`mediamtx --version`).
+
+logLevel: info
+
+# RTMP: lo que habla DJI Fly.
+rtmp: yes
+rtmpAddress: :1935
+
+# Solo usamos RTMP. Se apagan los demás protocolos para evitar choques de puertos.
+rtsp: no
+hls: no
+webrtc: no
+srt: no
+
+paths:
+  live/dron:
+    source: publisher

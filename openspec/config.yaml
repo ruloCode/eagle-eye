@@ -1,0 +1,48 @@
+schema: spec-driven
+
+# Contexto del proyecto: lo leen todos los agentes al proponer y aplicar changes.
+context: |
+  Proyecto: Eagle Eye. Agente de visión por computador para un dron DJI Mini 3 Pro, construido en un
+  workshop de 3 horas de la Claude Agent SDK. Escribe todos los artefactos en español.
+
+  Producto: dos modos. "cultivo": salud visible de plantas con el índice VARI = (G − R) / (G + R − B)
+  (cámara RGB, no NDVI). "personas": solo conteo para seguridad/aforo; PROHIBIDO reconocimiento facial
+  o identificar individuos.
+
+  Flujo: DJI Fly → RTMP → MediaMTX (:1935, /live/dron) → grabber OpenCV (1 frame cada N s a data/frames/,
+  latest.jpg a 1024 px, data/estado.json) → agente Claude Agent SDK (cada 5 s, JSON estructurado) →
+  POST a la API FastAPI (:8000) → SQLite (data/eagle.db) → dashboard estático (:5500) con polling cada 2 s.
+  Plan B: scripts/replay.sh retransmite un video al mismo RTMP con ffmpeg.
+
+  Stack: Python 3.11+ con uv; claude-agent-sdk, opencv-python, numpy, pillow, fastapi, uvicorn, httpx,
+  python-dotenv, jsonschema. Dashboard HTML/CSS/JS sin build ni npm.
+
+  Propiedad (cada agente SOLO edita la carpeta de su dueño; lo demás se pide en NOTAS-INTEGRACION.md):
+  - Rulo: agent/ (rama feat/agent, change add-vision-agent)
+  - César: ingest/, backend/, scripts/ (rama feat/backend, changes add-stream-ingest y add-hallazgos-api)
+  - Daniela: dashboard/ (rama feat/dashboard, change add-live-dashboard)
+  - contracts/ y openspec/specs/ son compartidos: solo cambian con acuerdo de los tres, commit "contract: …".
+
+  Contrato: contracts/hallazgo.schema.json (JSON Schema draft-07, output_format de la SDK). Campos
+  obligatorios: hora (HH:MM:SS), imagen (ruta relativa, p. ej. frames/0231.jpg), tipo (cultivo|personas),
+  severidad (baja|media|alta), personas (int ≥ 0 o null; solo personas), pct_estres (0–100 o null; solo
+  cultivo), descripcion (≤140), recomendacion (≤80). Sin campos extra. Endpoints en contracts/api.md:
+  POST /hallazgos (hallazgo + costo_usd → {id}, 422 si inválido), GET /hallazgos?limit=20,
+  GET /estado, GET /frames/{archivo}. Presupuesto del agente: max_turns ≤ 4, max_budget_usd 0.05 por
+  consulta, tope de sesión PRESUPUESTO_USD (2.00).
+
+  Cada frente debe correr solo con mocks: dashboard ?mock=1, agente --source samples/ --dry-run,
+  backend scripts/seed.py. Secretos solo en .env. Conventional Commits.
+
+rules:
+  tasks:
+    - Agrupar en tres bloques alineados con los hitos del día (Hito 1 10:15 mocks; Hito 2 11:00 contrato real; Hito 3 11:50 punta a punta)
+    - La última tarea siempre es verificar contra contracts/ y actualizar NOTAS-INTEGRACION.md
+  design:
+    - Nombrar solo archivos de la carpeta del dueño del change; dependencias de otras carpetas van como notas de integración
+
+operations:
+  apply:
+    guidance:
+      - Antes de editar, confirmar que el archivo está en la carpeta del dueño del change (ver CLAUDE.md)
+      - Hacer un commit pequeño con Conventional Commits al cerrar cada bloque de tareas

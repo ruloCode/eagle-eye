@@ -1,0 +1,20 @@
+# Secretos
+.env
+
+# Datos generados al correr (frames, SQLite, estado, respaldo jsonl)
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Sistema / editores
+.DS_Store
+.vscode/
+.idea/
+
+# Fotos y videos de prueba pesados (se comparten por fuera de git)
+samples/*.mp4
+samples/*.mov

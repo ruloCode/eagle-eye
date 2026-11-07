@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eagle Eye</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!--
+    Dueña: Daniela. Change de OpenSpec: add-live-dashboard (capacidad `dashboard-vivo`).
+    Una sola página 16:9, tema oscuro, sin scroll. Sin build, sin npm.
+    Servir desde la raíz del repo:  scripts/dev.sh --solo-web
+      → http://localhost:5500/dashboard/?mock=1
+  -->
+</head>
+<body>
+  <main class="app">
+
+    <!-- (1) HEADER ===========================================================
+         Logo "Eagle Eye 🦅" · estado del stream (en_vivo / sin_senal) · modo detectado
+         (cultivo / personas, del hallazgo más reciente).
+         TODO(daniela)
+    ===================================================================== -->
+    <header class="header" id="header">
+    </header>
+
+    <!-- (2) FRAME ACTUAL =====================================================
+         Imagen grande (~60% del ancho) de GET {API_URL}/frames/<ultimo_frame>.
+         Overlays de estado: "Sin señal", "Analizando…", "Presupuesto agotado".
+         TODO(daniela)
+    ===================================================================== -->
+    <section class="frame" id="frame">
+    </section>
+
+    <!-- (3) TARJETAS =========================================================
+         - Personas (null → "—")
+         - % de estrés con semáforo según severidad: baja=verde, media=amarillo, alta=rojo (null → "—")
+         - Frames analizados
+         - Barra de gasto: costo_usd vs presupuesto_usd
+         TODO(daniela)
+    ===================================================================== -->
+    <section class="tarjetas" id="tarjetas">
+    </section>
+
+    <!-- (4) FEED DE HALLAZGOS ================================================
+         Lista de GET /hallazgos, los nuevos arriba: hora, tipo, severidad, descripción, recomendación.
+         TODO(daniela)
+    ===================================================================== -->
+    <section class="feed" id="feed">
+    </section>
+
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

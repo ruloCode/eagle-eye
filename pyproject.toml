@@ -1,0 +1,21 @@
+[project]
+name = "eagle-eye"
+version = "0.1.0"
+description = "Agente de visión para dron DJI Mini 3 Pro: salud de cultivos (VARI) y conteo de personas."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "claude-agent-sdk",
+    "opencv-python",
+    "numpy",
+    "pillow",
+    "fastapi",
+    "uvicorn",
+    "httpx",
+    "python-dotenv",
+    "jsonschema",
+]
+
+[tool.uv]
+# Proyecto de aplicación (no se empaqueta); `uv sync` solo crea el .venv.
+package = false
