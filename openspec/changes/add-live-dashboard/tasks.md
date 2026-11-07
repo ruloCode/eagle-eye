@@ -5,11 +5,11 @@ Para verlo: `scripts/dev.sh --solo-web` → http://localhost:5500/dashboard/?moc
 
 ## 1. Hito 1 (10:15) — corre solo con mocks
 
-- [ ] 1.1 Layout en `styles.css`: grid 16:9 a pantalla completa, tema oscuro, sin scroll; verificar a 1920×1080 y 1280×720 que no aparece barra de scroll
-- [ ] 1.2 Header (logo, estado del stream, modo detectado); verificar con `?mock=1` que muestra "en vivo" y el modo del primer hallazgo del fixture
-- [ ] 1.3 Tarjetas: personas, % de estrés con semáforo por `severidad`, frames analizados, barra de gasto; verificar con `?mock=1` que la barra marca ~6 % (0.1248 / 2.00) y los null salen como "—"
-- [ ] 1.4 Feed de hallazgos (hora, tipo, severidad, descripción, recomendación), los nuevos arriba; verificar que salen los 6 del fixture en orden
-- [ ] 1.5 Frame grande con placeholder cuando no hay imagen; verificar en mock que no aparece el ícono de imagen rota
+- [x] 1.1 Layout en `styles.css`: grid 16:9 a pantalla completa, tema oscuro, sin scroll; verificar a 1920×1080 y 1280×720 que no aparece barra de scroll
+- [x] 1.2 Header (logo, estado del stream, modo detectado); verificar con `?mock=1` que muestra "en vivo" y el modo del primer hallazgo del fixture
+- [x] 1.3 Tarjetas: personas, % de estrés con semáforo por `severidad`, frames analizados, barra de gasto; verificar con `?mock=1` que la barra marca ~6 % (0.1248 / 2.00) y los null salen como "—"
+- [x] 1.4 Feed de hallazgos (hora, tipo, severidad, descripción, recomendación), los nuevos arriba; verificar que salen los 6 del fixture en orden
+- [x] 1.5 Frame grande con placeholder cuando no hay imagen; verificar en mock que no aparece el ícono de imagen rota
 
 ## 2. Hito 2 (11:00) — se conecta con el contrato real
 

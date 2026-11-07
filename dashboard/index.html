@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Eagle Eye</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
   <!--
     Dueña: Daniela. Change de OpenSpec: add-live-dashboard (capacidad `dashboard-vivo`).
@@ -16,19 +17,42 @@
   <main class="app">
 
     <!-- (1) HEADER ===========================================================
-         Logo "Eagle Eye 🦅" · estado del stream (en_vivo / sin_senal) · modo detectado
+         Logo "Eagle Eye" · estado del stream (en_vivo / sin_senal) · modo detectado
          (cultivo / personas, del hallazgo más reciente).
-         TODO(daniela)
     ===================================================================== -->
     <header class="header" id="header">
+      <div class="marca">
+        <img src="assets/logo.svg" alt="" />
+        <div>
+          <h1><span class="black">Eagle</span><span class="contorno">Eye</span></h1>
+          <span class="etiqueta">Visión aérea · DJI Mini 3 Pro</span>
+        </div>
+      </div>
+      <div class="estado-header">
+        <span class="pill mock" id="pill-mock" hidden>Datos de prueba</span>
+        <span class="pill" id="pill-stream"><span class="punto"></span><span id="txt-stream">Conectando</span></span>
+        <div class="modo">
+          <span class="etiqueta">Modo detectado</span>
+          <span class="valor black" id="txt-modo">—</span>
+        </div>
+      </div>
     </header>
 
     <!-- (2) FRAME ACTUAL =====================================================
          Imagen grande (~60% del ancho) de GET {API_URL}/frames/<ultimo_frame>.
          Overlays de estado: "Sin señal", "Analizando…", "Presupuesto agotado".
-         TODO(daniela)
+         TODO(daniela): overlays de estado (Hito 2, tareas 2.3–2.5).
     ===================================================================== -->
     <section class="frame" id="frame">
+      <img class="foto" id="foto" alt="Último frame analizado por el dron" />
+      <div class="placeholder">
+        <img src="assets/logo.svg" alt="" />
+        <p class="titulo"><span class="black">Sin</span><span class="contorno">imagen</span></p>
+        <span class="etiqueta" id="txt-placeholder">Esperando frame del dron</span>
+      </div>
+      <div class="visor"><i></i><i></i><i></i><i></i></div>
+      <div class="hud arriba"><span class="rec" id="hud-hora">--:--:--</span><span id="hud-tipo"></span></div>
+      <div class="hud abajo"><span id="hud-ruta">—</span><span>EAGLE EYE · VISOR</span></div>
     </section>
 
     <!-- (3) TARJETAS =========================================================
@@ -36,16 +60,42 @@
          - % de estrés con semáforo según severidad: baja=verde, media=amarillo, alta=rojo (null → "—")
          - Frames analizados
          - Barra de gasto: costo_usd vs presupuesto_usd
-         TODO(daniela)
     ===================================================================== -->
     <section class="tarjetas" id="tarjetas">
+      <article class="tarjeta" id="t-personas">
+        <span class="etiqueta">Personas</span>
+        <span class="sev" id="t-personas-sev"></span>
+        <span class="numero black" id="t-personas-num">—</span>
+      </article>
+      <article class="tarjeta" id="t-estres">
+        <span class="etiqueta">Estrés del cultivo</span>
+        <span class="sev" id="t-estres-sev"></span>
+        <span class="numero black" id="t-estres-num">—</span>
+      </article>
+      <article class="tarjeta" id="t-frames">
+        <span class="etiqueta">Frames analizados</span>
+        <span class="numero black amarillo" id="t-frames-num">—</span>
+      </article>
+      <article class="tarjeta gasto" id="t-gasto">
+        <span class="etiqueta">Gasto del agente</span>
+        <div class="cifras">
+          <span class="numero black" id="t-gasto-num">—</span>
+          <span class="de" id="t-gasto-de"></span>
+        </div>
+        <div class="barra" role="progressbar" aria-label="Gasto frente al presupuesto"
+             aria-valuemin="0" aria-valuemax="100" id="t-gasto-barra"><span></span></div>
+      </article>
     </section>
 
     <!-- (4) FEED DE HALLAZGOS ================================================
          Lista de GET /hallazgos, los nuevos arriba: hora, tipo, severidad, descripción, recomendación.
-         TODO(daniela)
     ===================================================================== -->
     <section class="feed" id="feed">
+      <div class="feed-titulo">
+        <h2><span class="black">Hallazgos</span><span class="contorno">en vivo</span></h2>
+        <span class="etiqueta" id="txt-total"></span>
+      </div>
+      <ol class="lista" id="lista"></ol>
     </section>
 
   </main>
