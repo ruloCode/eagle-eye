@@ -53,3 +53,11 @@ Si la nota toca `contracts/`, se resuelve entre los tres y el cambio va en un co
   auto.key
   ```
 - **Respuesta:** <la escribe quien corresponda>
+
+### [2026-11-07 11:46] Rulo → todos — El `allOf` del schema no sirve como `output_format`
+- **Estado:** abierta
+- **Carpeta / archivo:** `contracts/hallazgo.schema.json` (compartido)
+- **Qué pasa:** la API rechaza el schema como `output_format`: `input_schema does not support oneOf, allOf, or anyOf at the top level`. Es el `allOf` con los `if/then` (cultivo ↔ personas/pct_estres).
+- **Qué hice (solo en `agent/`):** `cargar_schema()` quita `allOf` antes de pasarlo a la SDK y `cumple_tipo()` revisa esa regla en Python. La API de César sigue validando el schema completo, así que el contrato no cambia.
+- **Propuesta (opcional, commit `contract:`):** dejarlo así, o mover la regla a la descripción y validarla solo en la API.
+- **Respuesta:** <la escriben César / Daniela>
