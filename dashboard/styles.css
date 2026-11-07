@@ -25,7 +25,8 @@
   --radio: 1.6rem;
 }
 
-html { font-size: clamp(13px, 1.04vw, 24px); }
+/* Escala con la medida más ajustada (ancho o alto): ~20px a 1920×1080, nunca se sale de la ventana. */
+html { font-size: clamp(11px, min(1.04vw, 1.85vh), 24px); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -286,7 +287,59 @@ html, body {
   letter-spacing: 0.06em;
   color: var(--blanco-70);
   text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 12px rgba(0, 0, 0, 0.7); /* legible sobre fotos claras */
 }
+.hud .analizando {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  background: var(--azul);
+  color: var(--blanco);
+  font-family: var(--sans-black);
+  font-weight: 900;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+}
+.hud .analizando[hidden] { display: none; }
+.hud .analizando::before {
+  content: ""; width: 0.45rem; height: 0.45rem; border-radius: 50%;
+  background: var(--blanco);
+  animation: latido 1.2s ease-out infinite;
+}
+
+/* Avisos de estado sobre el frame: sin señal / presupuesto agotado */
+.avisos {
+  position: absolute;
+  left: 50%; top: 3.6rem;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+  z-index: 2;
+  pointer-events: none;
+}
+.aviso {
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  padding: 0.75rem 1.6rem 0.8rem;
+  border-radius: 1.2rem;
+  text-align: center;
+  white-space: nowrap;
+}
+.aviso strong {
+  font-family: var(--sans-black);
+  font-weight: 900;
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.aviso span { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.04em; }
+.aviso.sin-senal { border: 2px solid var(--amarillo); color: var(--amarillo); }
+.aviso.agotado {
+  background: var(--amarillo); border-color: var(--amarillo); color: var(--negro);
+  box-shadow: 0 0 2.4rem rgba(255, 200, 0, 0.45);
+}
+.hero.sin-senal .foto,
+.hero.sin-senal .aguila { filter: grayscale(1) brightness(0.45); }
+
 .hud .rec { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--blanco); font-weight: 700; }
 .hud .rec::before {
   content: ""; width: 0.55rem; height: 0.55rem; border-radius: 50%;
@@ -395,6 +448,9 @@ html, body {
 .tarjeta[data-sev="alta"] .sev { font-family: var(--sans-black); font-weight: 900; }
 
 .gasto .numero { font-size: 2rem; }
+.tarjeta.gasto.agotado { border-color: var(--amarillo); }
+.tarjeta.gasto.agotado .numero { color: var(--amarillo); }
+.tarjeta.gasto.agotado .barra > span { background: var(--amarillo); }
 .gasto .de { font-size: 0.72rem; color: var(--blanco-70); margin-top: 0.3rem; white-space: nowrap; }
 .barra {
   margin-top: 0.5rem;
@@ -483,4 +539,21 @@ html, body {
 .item .recomendacion { margin-top: 0.2rem; font-size: 0.78rem; line-height: 1.28; color: var(--blanco-70); }
 .item .recomendacion::before { content: "→ "; color: var(--amarillo); font-weight: 900; }
 
+/* Hallazgo recién llegado: destello amarillo breve */
+.item.nuevo { animation: llegar 1.8s ease-out; }
+@keyframes llegar {
+  0%   { transform: translateY(-0.4rem); box-shadow: 0 0 0 2px var(--amarillo), 0 0 1.6rem rgba(255, 200, 0, 0.55); }
+  100% { transform: none; box-shadow: 0 0 0 0 rgba(255, 200, 0, 0); }
+}
+
 .vacio-feed { padding: 1.2rem 0.5rem; color: var(--blanco-70); }
+
+/* Sin conexión con la API: aviso discreto en el nav */
+.nav-derecha { justify-self: end; display: flex; gap: 0.5rem; }
+.pill-error {
+  box-shadow: inset 0 0 0 2px var(--amarillo);
+  color: var(--amarillo);
+  font-family: var(--sans-black);
+  font-weight: 900;
+}
+.pill[hidden] { display: none; }

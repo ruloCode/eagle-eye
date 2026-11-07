@@ -38,13 +38,16 @@
         <span class="pill" id="pill-stream"><span class="punto"></span><span id="txt-stream">Conectando</span></span>
         <span class="pill"><span class="regular">Modo</span><span class="black" id="txt-modo">—</span></span>
       </nav>
-      <span class="pill pill-amarilla" id="pill-mock" hidden>Datos de prueba</span>
+      <div class="nav-derecha">
+        <span class="pill pill-error" id="pill-conexion" hidden>Sin conexión · reintentando</span>
+        <span class="pill pill-amarilla" id="pill-mock" hidden>Datos de prueba</span>
+      </div>
     </header>
 
     <!-- (2) FRAME ACTUAL (hero) ==============================================
          Frame real del dron a pantalla grande; sin frame se ve el ojo de águila (assets/aguila.jpg).
          Encima: titular, visor sobre el ojo y las tarjetas de vidrio.
-         TODO(daniela): overlays sin señal / analizando / presupuesto agotado (Hito 2).
+         Estados: sin señal y presupuesto agotado (avisos), analizando (pill en el hud).
     ===================================================================== -->
     <section class="hero" id="frame">
       <img class="aguila" id="aguila" src="assets/aguila.jpg" alt="" />
@@ -61,8 +64,12 @@
 
       <div class="hud">
         <span class="rec" id="hud-hora">--:--:--</span>
+        <span class="analizando" id="analizando" hidden>Analizando…</span>
         <span><span id="hud-tipo"></span> · <span id="hud-ruta">—</span></span>
       </div>
+
+      <!-- Avisos de estado (sin señal / presupuesto agotado), los pinta app.js -->
+      <div class="avisos" id="avisos" aria-live="polite"></div>
 
       <div class="titular">
         <h2><span class="regular">Visión</span> <span class="black">aérea</span><br />

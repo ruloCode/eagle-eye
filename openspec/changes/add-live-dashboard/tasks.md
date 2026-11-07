@@ -13,11 +13,11 @@ Para verlo: `scripts/dev.sh --solo-web` → http://localhost:5500/dashboard/?moc
 
 ## 2. Hito 2 (11:00) — se conecta con el contrato real
 
-- [ ] 2.1 Probar contra la API de César (`scripts/seed.py --reset` + `uv run uvicorn backend.api:app`); verificar que `/dashboard/` sin `?mock=1` muestra lo mismo que en mock
-- [ ] 2.2 Imagen real desde `GET /frames/{archivo}`, cambiando el `src` solo si cambia la ruta; verificar que no parpadea en cada ciclo
-- [ ] 2.3 Estado sin conexión: apagar la API y verificar que aparece el aviso, se conservan los datos y vuelve solo al encender la API
-- [ ] 2.4 Estados sin señal y presupuesto agotado; verificar editando una copia local del fixture (`estado_stream: "sin_senal"`, `costo_usd: 2.0`)
-- [ ] 2.5 Estado analizando (en vivo sin hallazgos nuevos); verificar con la base vacía
+- [x] 2.1 Probar contra la API de César (`scripts/seed.py --reset` + `uv run uvicorn backend.api:app`); verificar que `/dashboard/` sin `?mock=1` muestra lo mismo que en mock
+- [x] 2.2 Imagen real desde `GET /frames/{archivo}`, cambiando el `src` solo si cambia la ruta; verificar que no parpadea en cada ciclo
+- [x] 2.3 Estado sin conexión: apagar la API y verificar que aparece el aviso, se conservan los datos y vuelve solo al encender la API
+- [x] 2.4 Estados sin señal y presupuesto agotado; verificar editando una copia local del fixture (`estado_stream: "sin_senal"`, `costo_usd: 2.0`)
+- [x] 2.5 Estado analizando (en vivo sin hallazgos nuevos); verificar con la base vacía
 
 ## 3. Hito 3 (11:50) — integración de punta a punta y pulido
 
