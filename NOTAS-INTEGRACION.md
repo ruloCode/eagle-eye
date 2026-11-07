@@ -23,6 +23,25 @@ Si la nota toca `contracts/`, se resuelve entre los tres y el cambio va en un co
 
 <!-- Escribe la primera nota debajo de esta línea -->
 
+### [2026-11-07 12:24] Daniela → César — Servir el dashboard sin caché en `scripts/dev.sh`
+- **Estado:** abierta
+- **Carpeta / archivo:** `scripts/dev.sh`
+- **Qué necesito:** que el servidor del dashboard (:5500) mande `Cache-Control: no-store`.
+- **Por qué:** `python3 -m http.server` no manda cabeceras de caché y Chrome guarda `index.html`, `styles.css` y `app.js`. Tras un `git pull` se sigue viendo el dashboard viejo, o una mezcla de archivos nuevos y viejos (así te pasó con la pantalla del águila). En `dashboard/` ya puse `?v=…` en el CSS, el JS y la imagen, pero si el navegador guarda el propio `index.html` eso no basta.
+- **Propuesta:** en `scripts/dev.sh`, cambiar `python3 -m http.server "$WEB_PORT" --bind 127.0.0.1 &` por:
+  ```bash
+  python3 - "$WEB_PORT" <<'PY' &
+  import sys, http.server, functools
+  class SinCache(http.server.SimpleHTTPRequestHandler):
+      def end_headers(self):
+          self.send_header("Cache-Control", "no-store")
+          super().end_headers()
+  http.server.ThreadingHTTPServer(("127.0.0.1", int(sys.argv[1])), SinCache).serve_forever()
+  PY
+  ```
+  Mientras tanto: recargar con **Cmd + Shift + R**.
+- **Respuesta:** <la escribe César>
+
 ### [2026-11-07 11:10] César → Rulo y Daniela — Backend + ingesta listos para integrar
 - **Estado:** abierta
 - **Carpeta / archivo:** `backend/`, `ingest/`, `scripts/` (informativo)

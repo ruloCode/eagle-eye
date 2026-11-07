@@ -18,6 +18,7 @@ La pantalla se proyecta durante la demo (16:9). Datos con la forma de `contracts
 
 ## Decisions
 
+- **Pantalla de inicio + vista en vivo** en la misma página (decisión de Daniela): el inicio es una capa fija con el ojo de águila, el visor que enfoca y el botón "Comenzar"; al pulsarlo la cámara entra al ojo (zoom) y queda la vista en vivo. `#vivo` en la URL salta el inicio. El polling corre desde el principio, así el inicio muestra si la API y el dron están listos.
 - **CSS Grid a pantalla completa** (`100vh`, `overflow: hidden`): header arriba; frame ~60% a la izquierda; tarjetas y feed a la derecha. El feed tiene scroll interno si hace falta, la página nunca.
 - **Paleta de marca: solo negro, amarillo y azul** (blanco solo para texto y vidrio), decisión de Daniela.
 - **Semáforo por `severidad`**, no por el número, dentro de esa paleta: `baja` azul, `media` amarillo en contorno, `alta` amarillo sólido con texto negro y brillo. Así la regla vive en el agente, no se duplica.

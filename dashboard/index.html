@@ -5,40 +5,89 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Eagle Eye</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23ffc800'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial Black,sans-serif' font-weight='900' font-size='30' fill='%23000'%3EEE%3C/text%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=20261107-4" />
   <!--
     Dueña: Daniela. Change de OpenSpec: add-live-dashboard (capacidad `dashboard-vivo`).
-    Una sola página 16:9, tema oscuro, sin scroll. Sin build, sin npm.
+    Dos pantallas en una página 16:9, tema oscuro, sin scroll. Sin build, sin npm.
+      1. Inicio: el ojo de águila con el visor y el botón "Comenzar".
+      2. En vivo: video del dron + tarjetas abajo + hallazgos a un lado.
     Paleta: SOLO negro, amarillo y azul (blanco solo para texto).
     Servir desde la raíz del repo:  scripts/dev.sh --solo-web
-      → http://localhost:5500/dashboard/?mock=1
+      → http://localhost:5500/dashboard/?mock=1      (inicio)
+      → http://localhost:5500/dashboard/?mock=1#vivo (directo a la vista en vivo)
   -->
 </head>
 <body>
-  <main class="app">
+  <!-- La G del logo ES un lente de cámara (diafragma de 6 aspas); se define una vez y se reusa. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <mask id="g-lente-mascara" maskUnits="userSpaceOnUse" x="-5" y="-5" width="110" height="110">
+        <rect x="-5" y="-5" width="110" height="110" fill="#fff" />
+        <!-- hueco del diafragma = hueco de la G -->
+        <path d="M45.7 25.4L69.2 33.9L73.5 58.6L54.3 74.6L30.8 66.1L26.5 41.4Z" fill="#000" />
+        <!-- ranuras curvas entre aspas -->
+        <path d="M45.7 25.4Q60.3 9.3 72.5 2.9M69.2 33.9Q90.4 38.6 102 45.9M73.5 58.6Q80.1 79.3 79.6 93M54.3 74.6Q39.7 90.7 27.5 97.1M30.8 66.1Q9.6 61.4 -2 54.1M26.5 41.4Q19.9 20.7 20.4 7"
+              stroke="#000" stroke-width="3.4" fill="none" />
+        <path d="M50 50L106 47V-2Z" fill="#000" />  <!-- abertura de la G (entre las 2 y las 3) -->
+      </mask>
+      <symbol id="g-lente" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="49" fill="currentColor" mask="url(#g-lente-mascara)" />
+        <path d="M53 47H99V67H53Z" fill="currentColor" />  <!-- barra de la G -->
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- (0) INICIO ===============================================================
+       Lo primero que se ve: el ojo de águila con el visor que enfoca y el botón "Comenzar".
+       Al dar "Comenzar" la cámara entra al ojo y aparece la vista en vivo.
+  ======================================================================== -->
+  <section class="intro" id="intro" aria-label="Inicio">
+    <!-- Escena del águila: foto, iris, foco y visor se mueven juntos (el visor sigue al ojo) -->
+    <div class="escena" aria-hidden="true">
+      <img class="aguila" id="aguila" src="assets/aguila.jpg?v=20261107-4" alt="" />
+      <div class="iris"></div>
+      <div class="foco"></div>
+      <div class="visor-ojo"><i></i><i></i><i></i><i></i><b></b><span>FOCO · 20/20</span></div>
+    </div>
+    <div class="sombra"></div>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <header class="intro-top">
+      <div class="logo" role="img" aria-label="Eagle Eye">
+        <span class="black palabra" aria-hidden="true">EA<svg class="g-ojo" viewBox="0 0 100 100"><use href="#g-lente" /></svg>LE</span><span class="black bloque" aria-hidden="true">EYE</span>
+      </div>
+      <div class="intro-estado">
+        <span class="chip-estado" id="intro-api"><i></i>API</span>
+        <span class="chip-estado" id="intro-dron"><i></i>Dron</span>
+        <span class="pill pill-amarilla" id="intro-mock" hidden>Datos de prueba</span>
+      </div>
+    </header>
+
+    <div class="titular">
+      <h1><span class="regular">Visión</span> <span class="black">aérea</span><br />
+          <span class="amp">&amp;</span> <span class="black">análisis</span> <span class="regular">en vivo</span></h1>
+      <p class="sub">Cero puntos ciegos · DJI Mini 3 Pro + Claude</p>
+      <button class="btn-comenzar" id="btn-comenzar" type="button">
+        <span>Comenzar</span><span class="btn-flecha" aria-hidden="true">→</span>
+      </button>
+    </div>
+
+    <footer class="intro-pie">
+      <span>Cultivo · índice VARI</span>
+      <span>Personas · solo conteo, sin identificar a nadie</span>
+    </footer>
+  </section>
+
+  <main class="app" id="app">
 
     <!-- (1) HEADER ===========================================================
-         Logo de texto "EAGLE EYE" · estado del stream · modo detectado.
+         Logo (vuelve al inicio) · estado del stream · modo detectado.
     ===================================================================== -->
     <header class="nav" id="header">
-      <div class="logo" role="img" aria-label="Eagle Eye">
-        <span class="black palabra" aria-hidden="true">EA<svg class="g-ojo" viewBox="0 0 100 100" fill="none">
-            <!-- La G ES un lente de cámara: diafragma de 6 aspas; el hueco hexagonal es el hueco
-                 de la G, la abertura arriba a la derecha y la barra cierran la letra. -->
-            <defs>
-              <mask id="g-lente-mascara" maskUnits="userSpaceOnUse" x="-5" y="-5" width="110" height="110">
-                <rect x="-5" y="-5" width="110" height="110" fill="#fff" />
-                <!-- hueco del diafragma -->
-                <path d="M45.7 25.4L69.2 33.9L73.5 58.6L54.3 74.6L30.8 66.1L26.5 41.4Z" fill="#000" />
-                <!-- ranuras curvas entre aspas -->
-                <path d="M45.7 25.4Q60.3 9.3 72.5 2.9M69.2 33.9Q90.4 38.6 102 45.9M73.5 58.6Q80.1 79.3 79.6 93M54.3 74.6Q39.7 90.7 27.5 97.1M30.8 66.1Q9.6 61.4 -2 54.1M26.5 41.4Q19.9 20.7 20.4 7"
-                      stroke="#000" stroke-width="3.4" fill="none" />
-                <path d="M50 50L106 47V-2Z" fill="#000" />  <!-- abertura de la G (entre las 2 y las 3) -->
-              </mask>
-            </defs>
-            <circle cx="50" cy="50" r="49" fill="currentColor" mask="url(#g-lente-mascara)" />
-            <path d="M53 47H99V67H53Z" fill="currentColor" />   <!-- barra de la G -->          </svg>LE</span><span class="black bloque" aria-hidden="true">EYE</span>
-      </div>
+      <button class="logo logo-boton" id="btn-inicio" type="button" aria-label="Eagle Eye: volver al inicio" title="Volver al inicio">
+        <span class="black palabra" aria-hidden="true">EA<svg class="g-ojo" viewBox="0 0 100 100"><use href="#g-lente" /></svg>LE</span><span class="black bloque" aria-hidden="true">EYE</span>
+      </button>
       <nav class="pills">
         <span class="pill" id="pill-stream"><span class="punto"></span><span id="txt-stream">Conectando</span></span>
         <span class="pill"><span class="regular">Modo</span><span class="black" id="txt-modo">—</span></span>
@@ -49,23 +98,17 @@
       </div>
     </header>
 
-    <!-- (2) FRAME ACTUAL (hero) ==============================================
-         Frame real del dron a pantalla grande; sin frame se ve el ojo de águila (assets/aguila.jpg).
-         Encima: titular, visor sobre el ojo y las tarjetas de vidrio.
+    <!-- (2) FRAME ACTUAL =====================================================
+         Video del dron a pantalla grande (GET /frames/...). Sin frame: visor esperando.
          Estados: sin señal y presupuesto agotado (avisos), analizando (pill en el hud).
     ===================================================================== -->
     <section class="hero" id="frame">
-      <!-- Escena del águila: foto, iris, pupila, foco y visor se mueven juntos (el visor sigue al ojo) -->
-      <div class="escena" aria-hidden="true">
-        <img class="aguila" id="aguila" src="assets/aguila.jpg" alt="" />
-        <div class="iris"></div>
-        <div class="foco"></div>
-        <div class="visor-ojo"><i></i><i></i><i></i><i></i><b></b><span>FOCO · 20/20</span></div>
-      </div>
       <img class="foto" id="foto" alt="Último frame analizado por el dron" />
-      <div class="sombra"></div>
-      <div class="glow glow-1"></div>
-      <div class="glow glow-2"></div>
+      <div class="espera" aria-hidden="true">
+        <div class="visor-centro"><i></i><i></i><i></i><i></i><b></b></div>
+        <p id="txt-espera">Esperando video del dron…</p>
+      </div>
+      <div class="sombra-vivo"></div>
 
       <div class="hud">
         <span class="rec" id="hud-hora">--:--:--</span>
@@ -76,11 +119,7 @@
       <!-- Avisos de estado (sin señal / presupuesto agotado), los pinta app.js -->
       <div class="avisos" id="avisos" aria-live="polite"></div>
 
-      <div class="titular">
-        <h2><span class="regular">Visión</span> <span class="black">aérea</span><br />
-            <span class="amp">&amp;</span> <span class="black">análisis</span> <span class="regular">en vivo</span></h2>
-        <p class="sub" id="txt-placeholder">Cero puntos ciegos</p>
-      </div>
+      <div class="relleno"></div>
 
       <!-- (3) TARJETAS =======================================================
            Personas · % estrés (semáforo por severidad) · frames analizados · gasto.
@@ -127,6 +166,7 @@
     </aside>
 
   </main>
-  <script src="app.js"></script>
+  <!-- ?v=… obliga al navegador a bajar la versión nueva: súbelo al cambiar CSS/JS/imagen -->
+  <script src="app.js?v=20261107-4"></script>
 </body>
 </html>
