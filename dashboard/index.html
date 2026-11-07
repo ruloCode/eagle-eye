@@ -23,46 +23,58 @@
     <header class="nav" id="header">
       <div class="logo" role="img" aria-label="Eagle Eye">
         <span class="black palabra" aria-hidden="true">EA<svg class="g-ojo" viewBox="0 0 100 100" fill="none">
-            <!-- G = anillo + barra; adentro, el ojo de águila con la ceja que le da la mirada fiera -->
-            <path d="M79.9 24.9A39 39 0 1 0 88.9 52H57" stroke="currentColor" stroke-width="22" />
-            <clipPath id="g-hueco"><circle cx="50" cy="50" r="28" /></clipPath>
-            <g clip-path="url(#g-hueco)">
-              <circle cx="39" cy="52" r="12.5" fill="currentColor" />
-              <circle cx="40" cy="52.5" r="6" fill="#000" />
-              <circle cx="36.2" cy="48.6" r="2" fill="#2d6bff" />
-              <path d="M18 30H58V40L18 47Z" fill="#000" />
-            </g>
-          </svg>LE</span><span class="black bloque" aria-hidden="true">EYE</span>
+            <!-- La G ES un lente de cámara: diafragma de 6 aspas; el hueco hexagonal es el hueco
+                 de la G, la abertura arriba a la derecha y la barra cierran la letra. -->
+            <defs>
+              <mask id="g-lente-mascara" maskUnits="userSpaceOnUse" x="-5" y="-5" width="110" height="110">
+                <rect x="-5" y="-5" width="110" height="110" fill="#fff" />
+                <!-- hueco del diafragma -->
+                <path d="M45.7 25.4L69.2 33.9L73.5 58.6L54.3 74.6L30.8 66.1L26.5 41.4Z" fill="#000" />
+                <!-- ranuras curvas entre aspas -->
+                <path d="M45.7 25.4Q60.3 9.3 72.5 2.9M69.2 33.9Q90.4 38.6 102 45.9M73.5 58.6Q80.1 79.3 79.6 93M54.3 74.6Q39.7 90.7 27.5 97.1M30.8 66.1Q9.6 61.4 -2 54.1M26.5 41.4Q19.9 20.7 20.4 7"
+                      stroke="#000" stroke-width="3.4" fill="none" />
+                <path d="M50 50L106 47V-2Z" fill="#000" />  <!-- abertura de la G (entre las 2 y las 3) -->
+              </mask>
+            </defs>
+            <circle cx="50" cy="50" r="49" fill="currentColor" mask="url(#g-lente-mascara)" />
+            <path d="M53 47H99V67H53Z" fill="currentColor" />   <!-- barra de la G -->          </svg>LE</span><span class="black bloque" aria-hidden="true">EYE</span>
       </div>
       <nav class="pills">
         <span class="pill" id="pill-stream"><span class="punto"></span><span id="txt-stream">Conectando</span></span>
         <span class="pill"><span class="regular">Modo</span><span class="black" id="txt-modo">—</span></span>
       </nav>
-      <span class="pill pill-amarilla" id="pill-mock" hidden>Datos de prueba</span>
+      <div class="nav-derecha">
+        <span class="pill pill-error" id="pill-conexion" hidden>Sin conexión · reintentando</span>
+        <span class="pill pill-amarilla" id="pill-mock" hidden>Datos de prueba</span>
+      </div>
     </header>
 
     <!-- (2) FRAME ACTUAL (hero) ==============================================
          Frame real del dron a pantalla grande; sin frame se ve el ojo de águila (assets/aguila.jpg).
          Encima: titular, visor sobre el ojo y las tarjetas de vidrio.
-         TODO(daniela): overlays sin señal / analizando / presupuesto agotado (Hito 2).
+         Estados: sin señal y presupuesto agotado (avisos), analizando (pill en el hud).
     ===================================================================== -->
     <section class="hero" id="frame">
-      <img class="aguila" id="aguila" src="assets/aguila.jpg" alt="" />
+      <!-- Escena del águila: foto, iris, pupila, foco y visor se mueven juntos (el visor sigue al ojo) -->
+      <div class="escena" aria-hidden="true">
+        <img class="aguila" id="aguila" src="assets/aguila.jpg" alt="" />
+        <div class="iris"></div>
+        <div class="foco"></div>
+        <div class="visor-ojo"><i></i><i></i><i></i><i></i><b></b><span>FOCO · 20/20</span></div>
+      </div>
       <img class="foto" id="foto" alt="Último frame analizado por el dron" />
-      <div class="iris"></div>
-      <div class="foco"></div>
       <div class="sombra"></div>
       <div class="glow glow-1"></div>
       <div class="glow glow-2"></div>
 
-      <div class="palabra-fondo black" aria-hidden="true">EAGLE EYE</div>
-
-      <div class="visor-ojo" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b><span>FOCO · 20/20</span></div>
-
       <div class="hud">
         <span class="rec" id="hud-hora">--:--:--</span>
+        <span class="analizando" id="analizando" hidden>Analizando…</span>
         <span><span id="hud-tipo"></span> · <span id="hud-ruta">—</span></span>
       </div>
+
+      <!-- Avisos de estado (sin señal / presupuesto agotado), los pinta app.js -->
+      <div class="avisos" id="avisos" aria-live="polite"></div>
 
       <div class="titular">
         <h2><span class="regular">Visión</span> <span class="black">aérea</span><br />

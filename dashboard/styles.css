@@ -25,7 +25,8 @@
   --radio: 1.6rem;
 }
 
-html { font-size: clamp(13px, 1.04vw, 24px); }
+/* Escala con la medida más ajustada (ancho o alto): ~20px a 1920×1080, nunca se sale de la ventana. */
+html { font-size: clamp(11px, min(1.04vw, 1.85vh), 24px); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -170,19 +171,40 @@ html, body {
   --ojo-r: 3.5rem;
 }
 
-.hero .aguila,
+/* Escena del águila: todo lo que está pegado al ojo vive aquí y se mueve junto
+   (deriva lenta tipo cámara). El visor nunca se separa del ojo. */
+.escena {
+  position: absolute; inset: 0;
+  z-index: -3;
+  transform-origin: var(--ojo-x) var(--ojo-y);
+  animation: deriva 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.escena .aguila {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 64% 42%; /* igual que POS en app.js */
+}
 .hero .foto {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
   z-index: -3;
+  display: none;
 }
-.hero .aguila { object-position: 64% 42%; } /* igual que POS en app.js */
-.hero .foto { display: none; }
 .hero.con-imagen .foto { display: block; }
+.hero.con-imagen .escena { animation: none; transform: none; z-index: -1; }
 .hero.con-imagen .aguila,
 .hero.con-imagen .iris,
 .hero.con-imagen .foco { display: none; }
+
+@keyframes deriva {
+  0%   { transform: scale(1)    translate(0, 0); }
+  35%  { transform: scale(1.05) translate(-1.4%, 0.6%); }
+  70%  { transform: scale(1.03) translate(0.8%, -0.8%); }
+  100% { transform: scale(1.06) translate(-0.4%, 1%); }
+}
 
 /* Tinte amarillo sobre el iris (multiply: la pupila sigue negra) */
 .iris {
@@ -193,7 +215,6 @@ html, body {
   border-radius: 50%;
   background: radial-gradient(circle, var(--amarillo) 0 72%, rgba(255, 200, 0, 0) 100%);
   mix-blend-mode: multiply;
-  z-index: -2;
   pointer-events: none;
 }
 
@@ -203,7 +224,6 @@ html, body {
   background: radial-gradient(circle at var(--ojo-x) var(--ojo-y),
               rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) calc(var(--ojo-r) * 2.2),
               rgba(0, 0, 0, 0.55) calc(var(--ojo-r) * 9));
-  z-index: -2;
   pointer-events: none;
 }
 
@@ -230,32 +250,26 @@ html, body {
 .glow-2 { width: 26%; height: 18%; left: 2%; top: -8%; opacity: 0.35; }
 .hero.con-imagen .glow { opacity: 0.18; }
 
-/* Palabra gigante de fondo (ref "BLUEBIRD") */
-.palabra-fondo {
-  position: absolute;
-  left: 0; right: 0; top: 4%;
-  text-align: center;
-  font-size: 9.4vw;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  white-space: nowrap;
-  color: var(--amarillo);
-  opacity: 0.1;
-  pointer-events: none;
-  z-index: -1;
-}
-.hero.con-imagen .palabra-fondo { opacity: 0.05; }
-
-/* Cuadro de enfoque amarillo justo encima del ojo */
+/* Cuadro de enfoque amarillo justo encima del ojo: entra enfocando, titila y suelta */
 .visor-ojo {
   position: absolute;
-  left: var(--ojo-x); top: var(--ojo-y);
+  /* centrado con calc (no con translate) para que `scale` enfoque desde el centro del ojo */
+  left: calc(var(--ojo-x) - var(--ojo-r) * 1.65); top: calc(var(--ojo-y) - var(--ojo-r) * 1.65);
   width: calc(var(--ojo-r) * 3.3); height: calc(var(--ojo-r) * 3.3);
-  transform: translate(-50%, -50%);
   pointer-events: none;
-  z-index: 0;
+  animation: enfocar 3.6s ease-out infinite;
 }
-.hero.con-imagen .visor-ojo { left: 50%; top: 45%; width: 7.5rem; height: 7.5rem; }
+@keyframes enfocar {
+  0%   { scale: 1.4; opacity: 0; }
+  12%  { scale: 1;   opacity: 1; }
+  18%  { opacity: 0.15; }
+  24%  { opacity: 1; }
+  30%  { opacity: 0.15; }
+  36%  { opacity: 1; }
+  85%  { scale: 1;   opacity: 1; }
+  100% { scale: 1.4; opacity: 0; }
+}
+.hero.con-imagen .visor-ojo { left: calc(50% - 3.75rem); top: calc(45% - 3.75rem); width: 7.5rem; height: 7.5rem; }
 .visor-ojo i { position: absolute; width: 28%; height: 28%; border: 0 solid var(--amarillo); }
 .visor-ojo i:nth-child(1) { top: 0; left: 0; border-top-width: 3px; border-left-width: 3px; }
 .visor-ojo i:nth-child(2) { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; }
@@ -286,7 +300,59 @@ html, body {
   letter-spacing: 0.06em;
   color: var(--blanco-70);
   text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 12px rgba(0, 0, 0, 0.7); /* legible sobre fotos claras */
 }
+.hud .analizando {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  background: var(--azul);
+  color: var(--blanco);
+  font-family: var(--sans-black);
+  font-weight: 900;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+}
+.hud .analizando[hidden] { display: none; }
+.hud .analizando::before {
+  content: ""; width: 0.45rem; height: 0.45rem; border-radius: 50%;
+  background: var(--blanco);
+  animation: latido 1.2s ease-out infinite;
+}
+
+/* Avisos de estado sobre el frame: sin señal / presupuesto agotado */
+.avisos {
+  position: absolute;
+  left: 50%; top: 3.6rem;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+  z-index: 2;
+  pointer-events: none;
+}
+.aviso {
+  display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  padding: 0.75rem 1.6rem 0.8rem;
+  border-radius: 1.2rem;
+  text-align: center;
+  white-space: nowrap;
+}
+.aviso strong {
+  font-family: var(--sans-black);
+  font-weight: 900;
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.aviso span { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.04em; }
+.aviso.sin-senal { border: 2px solid var(--amarillo); color: var(--amarillo); }
+.aviso.agotado {
+  background: var(--amarillo); border-color: var(--amarillo); color: var(--negro);
+  box-shadow: 0 0 2.4rem rgba(255, 200, 0, 0.45);
+}
+.hero.sin-senal .foto,
+.hero.sin-senal .aguila { filter: grayscale(1) brightness(0.45); }
+
 .hud .rec { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--blanco); font-weight: 700; }
 .hud .rec::before {
   content: ""; width: 0.55rem; height: 0.55rem; border-radius: 50%;
@@ -395,6 +461,9 @@ html, body {
 .tarjeta[data-sev="alta"] .sev { font-family: var(--sans-black); font-weight: 900; }
 
 .gasto .numero { font-size: 2rem; }
+.tarjeta.gasto.agotado { border-color: var(--amarillo); }
+.tarjeta.gasto.agotado .numero { color: var(--amarillo); }
+.tarjeta.gasto.agotado .barra > span { background: var(--amarillo); }
 .gasto .de { font-size: 0.72rem; color: var(--blanco-70); margin-top: 0.3rem; white-space: nowrap; }
 .barra {
   margin-top: 0.5rem;
@@ -483,4 +552,28 @@ html, body {
 .item .recomendacion { margin-top: 0.2rem; font-size: 0.78rem; line-height: 1.28; color: var(--blanco-70); }
 .item .recomendacion::before { content: "→ "; color: var(--amarillo); font-weight: 900; }
 
+/* Hallazgo recién llegado: destello amarillo breve */
+.item.nuevo { animation: llegar 1.8s ease-out; }
+@keyframes llegar {
+  0%   { transform: translateY(-0.4rem); box-shadow: 0 0 0 2px var(--amarillo), 0 0 1.6rem rgba(255, 200, 0, 0.55); }
+  100% { transform: none; box-shadow: 0 0 0 0 rgba(255, 200, 0, 0); }
+}
+
 .vacio-feed { padding: 1.2rem 0.5rem; color: var(--blanco-70); }
+
+/* Sin conexión con la API: aviso discreto en el nav */
+.nav-derecha { justify-self: end; display: flex; gap: 0.5rem; }
+.pill-error {
+  box-shadow: inset 0 0 0 2px var(--amarillo);
+  color: var(--amarillo);
+  font-family: var(--sans-black);
+  font-weight: 900;
+}
+.pill[hidden] { display: none; }
+
+/* Quien pide menos movimiento en su sistema no ve animaciones */
+@media (prefers-reduced-motion: reduce) {
+  .escena, .visor-ojo, .item.nuevo, #pill-stream .punto, .hud .rec::before {
+    animation: none !important;
+  }
+}

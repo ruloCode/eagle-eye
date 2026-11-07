@@ -64,7 +64,6 @@ function pintarHeader(estado, hallazgos) {
 }
 
 // (2) Frame actual. El src solo cambia si cambia la ruta (evita parpadeo).
-//     TODO(daniela): overlays sin señal / analizando / presupuesto agotado (Hito 2).
 let srcActual = null;
 function pintarFrame(estado, hallazgos) {
   const ultimo = hallazgos[0];
@@ -121,6 +120,7 @@ function pintarTarjetas(estado, hallazgos) {
   const costo = estado?.costo_usd;
   const tope = estado?.presupuesto_usd;
   const pct = esNumero(costo) && esNumero(tope) && tope > 0 ? Math.min(100, (costo / tope) * 100) : 0;
+  $("t-gasto").classList.toggle("agotado", presupuestoAgotado(estado));
   $("t-gasto-num").textContent = usd(costo);
   $("t-gasto-de").textContent = esNumero(tope) ? `de ${usd(tope)} · ${pct.toFixed(0)} %` : "";
   const barra = $("t-gasto-barra");
@@ -128,11 +128,53 @@ function pintarTarjetas(estado, hallazgos) {
   barra.setAttribute("aria-valuenow", pct.toFixed(0));
 }
 
+function presupuestoAgotado(estado) {
+  return esNumero(estado?.costo_usd) && esNumero(estado?.presupuesto_usd) && estado.costo_usd >= estado.presupuesto_usd;
+}
+
+// Estados derivados (design.md): sin señal y presupuesto agotado → aviso sobre el frame;
+// analizando → en vivo pero sin hallazgos todavía o el último frame no cambió en este ciclo.
+let frameAnterior;
+function pintarEstados(estado, hallazgos) {
+  const enVivo = estado?.estado_stream === "en_vivo";
+  const agotado = presupuestoAgotado(estado);
+  const frame = estado?.ultimo_frame ?? null;
+  const analizando = enVivo && !agotado && (!hallazgos.length || frame === frameAnterior);
+  frameAnterior = frame;
+
+  $("frame").classList.toggle("sin-senal", !enVivo);
+  $("analizando").hidden = !analizando;
+
+  const avisos = [];
+  if (agotado) {
+    avisos.push(["agotado", "Presupuesto agotado", `${usd(estado.costo_usd)} de ${usd(estado.presupuesto_usd)} · el agente se detuvo`]);
+  }
+  if (!enVivo) {
+    avisos.push(["sin-senal", "Sin señal", "No llegan frames del dron · revisa la transmisión"]);
+  }
+  $("avisos").replaceChildren(
+    ...avisos.map(([clase, titulo, sub]) => {
+      const a = el("div", `aviso vidrio ${clase}`);
+      a.append(el("strong", null, titulo), el("span", null, sub));
+      return a;
+    }),
+  );
+}
+
 // (4) Feed: los nuevos arriba (la API ya los manda así; se ordena por id por si acaso).
+//     Los que no estaban en el ciclo anterior se resaltan un momento.
+let idsAnteriores = null;
 function pintarFeed(hallazgos) {
   const lista = $("lista");
   const items = [...hallazgos].sort((a, b) => (b.id ?? 0) - (a.id ?? 0));
   $("txt-total").textContent = items.length ? `${items.length} recientes` : "";
+
+  const previos = idsAnteriores;
+  idsAnteriores = new Set(items.map((h) => h.id));
+  // Si no cambió nada, no se re-pinta (así la animación de "nuevo" no se repite cada 2 s).
+  const firma = items.map((h) => h.id).join(",");
+  if (lista.dataset.firma === firma) return;
+  lista.dataset.firma = firma;
 
   if (!items.length) {
     lista.replaceChildren(el("li", "vacio-feed", "Todavía no hay hallazgos."));
@@ -143,6 +185,7 @@ function pintarFeed(hallazgos) {
     ...items.map((h) => {
       const li = el("li", "item");
       li.dataset.sev = h.severidad;
+      if (previos && !previos.has(h.id)) li.classList.add("nuevo");
 
       const meta = el("div", "meta");
       meta.append(el("span", "hora", h.hora), el("span", "chip tipo", h.tipo), el("span", "chip sev", h.severidad));
@@ -182,17 +225,25 @@ $("aguila").addEventListener("error", (e) => e.target.remove());
 new ResizeObserver(ubicarOjo).observe($("frame"));
 ubicarOjo();
 
+// API caída: aviso discreto, se conservan los últimos datos y el polling sigue.
+// El error se registra una sola vez por racha para no llenar la consola.
+let enRachaDeError = false;
 async function tick() {
   try {
     const [estado, hallazgos] = await Promise.all([obtener(RUTAS.estado), obtener(RUTAS.hallazgos)]);
     const lista = Array.isArray(hallazgos) ? hallazgos : [];
+    if (enRachaDeError) console.info("[eagle-eye] conexión recuperada");
+    enRachaDeError = false;
+    $("pill-conexion").hidden = true;
     pintarHeader(estado, lista);
     pintarFrame(estado, lista);
+    pintarEstados(estado, lista);
     pintarTarjetas(estado, lista);
     pintarFeed(lista);
   } catch (err) {
-    // TODO(daniela): API caída → mostrar "sin conexión" sin romper la página (Hito 2, tarea 2.3).
-    console.warn("[eagle-eye]", err);
+    if (!enRachaDeError) console.warn("[eagle-eye] sin conexión con la API:", err.message);
+    enRachaDeError = true;
+    $("pill-conexion").hidden = false;
   }
 }
 
