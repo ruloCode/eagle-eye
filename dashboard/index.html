@@ -23,18 +23,22 @@
     <header class="nav" id="header">
       <div class="logo" role="img" aria-label="Eagle Eye">
         <span class="black palabra" aria-hidden="true">EA<svg class="g-ojo" viewBox="0 0 100 100" fill="none">
-            <!-- La G ES el ojo: el iris amarillo es el anillo, la pupila negra es el hueco,
-                 la ceja del águila corta el anillo arriba y abre la G; la barra cierra la letra. -->
+            <!-- La G ES un lente de cámara: diafragma de 6 aspas; el hueco hexagonal es el hueco
+                 de la G, la abertura arriba a la derecha y la barra cierran la letra. -->
             <defs>
-              <mask id="g-ojo-mascara" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
-                <rect width="100" height="100" fill="#fff" />
-                <path d="M-5 -5H105V24L-5 -3Z" fill="#000" />  <!-- ceja: baja hacia el frente del ojo y afila la punta -->
-                <path d="M50 50L106 47V-2Z" fill="#000" />      <!-- abertura de la G (entre las 2 y las 3) -->
+              <mask id="g-lente-mascara" maskUnits="userSpaceOnUse" x="-5" y="-5" width="110" height="110">
+                <rect x="-5" y="-5" width="110" height="110" fill="#fff" />
+                <!-- hueco del diafragma -->
+                <path d="M45.7 25.4L69.2 33.9L73.5 58.6L54.3 74.6L30.8 66.1L26.5 41.4Z" fill="#000" />
+                <!-- ranuras curvas entre aspas -->
+                <path d="M45.7 25.4Q60.3 9.3 72.5 2.9M69.2 33.9Q90.4 38.6 102 45.9M73.5 58.6Q80.1 79.3 79.6 93M54.3 74.6Q39.7 90.7 27.5 97.1M30.8 66.1Q9.6 61.4 -2 54.1M26.5 41.4Q19.9 20.7 20.4 7"
+                      stroke="#000" stroke-width="3.4" fill="none" />
+                <path d="M50 50L106 47V-2Z" fill="#000" />  <!-- abertura de la G (entre las 2 y las 3) -->
               </mask>
             </defs>
-            <circle cx="50" cy="50" r="38" stroke="currentColor" stroke-width="24" mask="url(#g-ojo-mascara)" />
-            <path d="M53 47H100V68H53Z" fill="currentColor" />           <!-- barra de la G -->
-            <circle cx="38" cy="39" r="5.5" fill="#2d6bff" />           <!-- brillo: el hueco es la pupila -->
+            <circle cx="50" cy="50" r="49" fill="currentColor" mask="url(#g-lente-mascara)" />
+            <path d="M53 47H99V67H53Z" fill="currentColor" />   <!-- barra de la G -->
+            <circle cx="41" cy="42" r="4.5" fill="#2d6bff" />  <!-- reflejo del lente -->
           </svg>LE</span><span class="black bloque" aria-hidden="true">EYE</span>
       </div>
       <nav class="pills">
