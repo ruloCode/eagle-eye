@@ -7,7 +7,7 @@
 # DJI Fly (o scripts/replay.sh) publica en:  rtmp://<IP-del-portátil>:1935/live/dron
 # El grabber lee de:                          rtmp://localhost:1935/live/dron
 
-# TODO(cesar): verificar estas claves con la versión instalada (`mediamtx --version`).
+# Claves verificadas con MediaMTX v1.21.3 (arranca OK: RTMP en :1935, publicación en live/dron).
 
 logLevel: info
 
