@@ -39,7 +39,7 @@ Reglas de equipo, puertos y rutas: [`CLAUDE.md`](CLAUDE.md). Contrato: [`contrac
 ## Arrancar tu frente
 
 ```bash
-git clone git@github.com:ruloCode/eagle-eye.git && cd eagle-eye && git checkout feat/<frente>
+git clone https://github.com/ruloCode/eagle-eye.git && cd eagle-eye && git checkout feat/<frente>
 cp .env.example .env      # y pon tu ANTHROPIC_API_KEY
 uv sync                   # Daniela no lo necesita
 claude                    # → /opsx:apply <tu-change>
