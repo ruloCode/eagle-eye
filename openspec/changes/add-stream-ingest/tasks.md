@@ -4,11 +4,11 @@ Solo se editan `ingest/` y `scripts/`. Lo que haga falta de otras carpetas va en
 
 ## 1. Hito 1 (10:15) — corre solo con mocks
 
-- [ ] 1.1 Instalar MediaMTX (`brew install mediamtx`) y arrancar con `mediamtx ingest/mediamtx.yml`; verificar que escucha en `:1935` (`nc -z localhost 1935`)
-- [ ] 1.2 Poner un video de prueba en `samples/` y correr `scripts/replay.sh samples/<video>.mp4`; verificar que MediaMTX registra la publicación en `live/dron`
-- [ ] 1.3 Implementar `redimensionar` y `guardar_frame` en `ingest/grabber.py`; verificar con un frame suelto que el JPG queda con lado mayor 1024 px
-- [ ] 1.4 Implementar `siguiente_numero`; verificar que tras reiniciar el grabber no se sobrescriben frames
-- [ ] 1.5 Implementar el `loop` con intervalo configurable; verificar con `replay.sh` que aparecen `data/frames/NNNN.jpg` cada ~4 s y con `--intervalo 2` cada ~2 s
+- [x] 1.1 Instalar MediaMTX (`brew install mediamtx`) y arrancar con `mediamtx ingest/mediamtx.yml`; verificar que escucha en `:1935` (`nc -z localhost 1935`)
+- [x] 1.2 Poner un video de prueba en `samples/` y correr `scripts/replay.sh samples/<video>.mp4`; verificar que MediaMTX registra la publicación en `live/dron`
+- [x] 1.3 Implementar `redimensionar` y `guardar_frame` en `ingest/grabber.py`; verificar con un frame suelto que el JPG queda con lado mayor 1024 px
+- [x] 1.4 Implementar `siguiente_numero`; verificar que tras reiniciar el grabber no se sobrescriben frames
+- [x] 1.5 Implementar el `loop` con intervalo configurable; verificar con `replay.sh` que aparecen `data/frames/NNNN.jpg` cada ~4 s y con `--intervalo 2` cada ~2 s
 
 ## 2. Hito 2 (11:00) — se conecta con el contrato real
 

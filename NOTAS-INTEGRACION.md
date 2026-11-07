@@ -22,3 +22,15 @@ Si la nota toca `contracts/`, se resuelve entre los tres y el cambio va en un co
 ## Notas
 
 <!-- Escribe la primera nota debajo de esta línea -->
+
+### [2026-11-07 10:57] César → todos — Ignorar auto.crt / auto.key de MediaMTX
+- **Estado:** abierta
+- **Carpeta / archivo:** `.gitignore` (raíz, compartido)
+- **Qué necesito:** agregar `auto.crt` y `auto.key` al `.gitignore`.
+- **Por qué:** MediaMTX genera esos certificados autofirmados en la raíz al arrancar (aun con TLS apagado). No deben ir a git y hoy aparecen como untracked al correr la ingesta.
+- **Propuesta:** añadir dos líneas al `.gitignore`:
+  ```
+  auto.crt
+  auto.key
+  ```
+- **Respuesta:** <la escribe quien corresponda>
