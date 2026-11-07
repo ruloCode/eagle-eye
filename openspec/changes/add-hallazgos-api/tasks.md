@@ -19,7 +19,7 @@ Solo se editan `backend/` y `scripts/`. Lo que haga falta de otras carpetas va e
 
 ## 3. Hito 3 (11:50) — integración de punta a punta y pulido
 
-- [ ] 3.1 Con grabber + agente + dashboard corriendo, verificar que `frames_analizados` y `costo_usd` suben en `GET /estado` y el dashboard los refleja
-- [ ] 3.2 Verificar que `scripts/dev.sh` levanta API y dashboard con un solo comando
-- [ ] 3.3 Revisar que la API no se cae si el agente envía basura (422) ni si falta `data/estado.json`
-- [ ] 3.4 Verificar contra `contracts/` y actualizar `NOTAS-INTEGRACION.md`
+- [ ] 3.1 Con grabber + agente + dashboard corriendo, verificar que `frames_analizados` y `costo_usd` suben en `GET /estado` y el dashboard los refleja — BLOQUEADA: requiere el agente de Rulo y el dashboard de Daniela corriendo. La lógica (COUNT/SUM por vuelo) quedó verificada.
+- [x] 3.2 Verificar que `scripts/dev.sh` levanta API y dashboard con un solo comando
+- [x] 3.3 Revisar que la API no se cae si el agente envía basura (422) ni si falta `data/estado.json`
+- [x] 3.4 Verificar contra `contracts/` y actualizar `NOTAS-INTEGRACION.md`

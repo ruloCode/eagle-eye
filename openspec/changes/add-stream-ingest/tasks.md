@@ -20,7 +20,7 @@ Solo se editan `ingest/` y `scripts/`. Lo que haga falta de otras carpetas va en
 
 ## 3. Hito 3 (11:50) — integración de punta a punta y pulido
 
-- [ ] 3.1 Con el agente corriendo en vivo, verificar que lee `latest.jpg` y que `imagen` del hallazgo apunta a un `frames/NNNN.jpg` existente
-- [ ] 3.2 Verificar que el dashboard muestra "sin señal" al cortar el stream y vuelve a "en vivo" al reanudarlo
-- [ ] 3.3 Ensayar el plan B completo (dron apagado, `replay.sh` en bucle) durante 2 minutos sin intervención
-- [ ] 3.4 Verificar contra `contracts/` y actualizar `NOTAS-INTEGRACION.md`
+- [ ] 3.1 Con el agente corriendo en vivo, verificar que lee `latest.jpg` y que `imagen` del hallazgo apunta a un `frames/NNNN.jpg` existente — BLOQUEADA: requiere el agente de Rulo. `latest.jpg` quedó verificado (lectura concurrente sin truncar).
+- [ ] 3.2 Verificar que el dashboard muestra "sin señal" al cortar el stream y vuelve a "en vivo" al reanudarlo — BLOQUEADA: requiere el dashboard de Daniela. La transición en `estado.json` (≤ 10 s) quedó verificada.
+- [x] 3.3 Ensayar el plan B completo (dron apagado, `replay.sh` en bucle) durante 2 minutos sin intervención
+- [x] 3.4 Verificar contra `contracts/` y actualizar `NOTAS-INTEGRACION.md`
