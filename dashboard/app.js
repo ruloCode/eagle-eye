@@ -157,6 +157,31 @@ function pintarFeed(hallazgos) {
   );
 }
 
+// Visor sobre el ojo del águila. Coordenadas del iris en assets/aguila.jpg, como fracción
+// de la imagen (x, y) y del ancho (r). POS = object-position de .aguila en styles.css.
+const OJO = { x: 0.64, y: 0.42, r: 0.0556 };
+const POS = { x: 0.64, y: 0.42 };
+function ubicarOjo() {
+  const hero = $("frame");
+  const img = $("aguila");
+  if (!img?.naturalWidth) return;
+  const cw = hero.clientWidth;
+  const ch = hero.clientHeight;
+  // object-fit: cover → escala y desplazamiento reales de la foto dentro del hero
+  const s = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
+  const dw = img.naturalWidth * s;
+  const dh = img.naturalHeight * s;
+  const ox = (cw - dw) * POS.x;
+  const oy = (ch - dh) * POS.y;
+  hero.style.setProperty("--ojo-x", `${ox + OJO.x * dw}px`);
+  hero.style.setProperty("--ojo-y", `${oy + OJO.y * dh}px`);
+  hero.style.setProperty("--ojo-r", `${OJO.r * dw}px`);
+}
+$("aguila").addEventListener("load", ubicarOjo);
+$("aguila").addEventListener("error", (e) => e.target.remove());
+new ResizeObserver(ubicarOjo).observe($("frame"));
+ubicarOjo();
+
 async function tick() {
   try {
     const [estado, hallazgos] = await Promise.all([obtener(RUTAS.estado), obtener(RUTAS.hallazgos)]);

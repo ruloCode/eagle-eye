@@ -21,7 +21,19 @@
          Logo de texto "EAGLE EYE" · estado del stream · modo detectado.
     ===================================================================== -->
     <header class="nav" id="header">
-      <div class="logo" aria-label="Eagle Eye"><span class="black">EAGLE</span><span class="black bloque">EYE</span></div>
+      <div class="logo" role="img" aria-label="Eagle Eye">
+        <span class="black palabra" aria-hidden="true">EA<svg class="g-ojo" viewBox="0 0 100 100" fill="none">
+            <!-- G = anillo + barra; adentro, el ojo de águila con la ceja que le da la mirada fiera -->
+            <path d="M79.9 24.9A39 39 0 1 0 88.9 52H57" stroke="currentColor" stroke-width="22" />
+            <clipPath id="g-hueco"><circle cx="50" cy="50" r="28" /></clipPath>
+            <g clip-path="url(#g-hueco)">
+              <circle cx="39" cy="52" r="12.5" fill="currentColor" />
+              <circle cx="40" cy="52.5" r="6" fill="#000" />
+              <circle cx="36.2" cy="48.6" r="2" fill="#2d6bff" />
+              <path d="M18 30H58V40L18 47Z" fill="#000" />
+            </g>
+          </svg>LE</span><span class="black bloque" aria-hidden="true">EYE</span>
+      </div>
       <nav class="pills">
         <span class="pill" id="pill-stream"><span class="punto"></span><span id="txt-stream">Conectando</span></span>
         <span class="pill"><span class="regular">Modo</span><span class="black" id="txt-modo">—</span></span>
@@ -35,15 +47,17 @@
          TODO(daniela): overlays sin señal / analizando / presupuesto agotado (Hito 2).
     ===================================================================== -->
     <section class="hero" id="frame">
-      <img class="aguila" src="assets/aguila.jpg" alt="" onerror="this.remove()" />
+      <img class="aguila" id="aguila" src="assets/aguila.jpg" alt="" />
       <img class="foto" id="foto" alt="Último frame analizado por el dron" />
+      <div class="iris"></div>
+      <div class="foco"></div>
       <div class="sombra"></div>
       <div class="glow glow-1"></div>
       <div class="glow glow-2"></div>
 
       <div class="palabra-fondo black" aria-hidden="true">EAGLE EYE</div>
 
-      <div class="visor-ojo" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b></div>
+      <div class="visor-ojo" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b><span>FOCO · 20/20</span></div>
 
       <div class="hud">
         <span class="rec" id="hud-hora">--:--:--</span>
