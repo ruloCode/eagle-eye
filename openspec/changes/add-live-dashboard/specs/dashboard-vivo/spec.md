@@ -4,6 +4,20 @@ Mostrar en una sola pantalla, en vivo, qué ve el dron, qué encontró el agente
 
 ## ADDED Requirements
 
+### Requirement: Pantalla de inicio
+
+El dashboard SHALL abrir con una pantalla de inicio a pantalla completa (el ojo de águila con el visor que enfoca, el logo, el titular y el estado de la API y del dron) y un botón "Comenzar". Al pulsarlo SHALL mostrarse la vista en vivo (frame, tarjetas y feed). El logo del header SHALL volver al inicio, y `#vivo` en la URL SHALL abrir directo la vista en vivo.
+
+#### Scenario: Primera carga
+
+- **WHEN** se abre `/dashboard/` sin `#vivo`
+- **THEN** se ve la pantalla de inicio con el botón "Comenzar"
+
+#### Scenario: Comenzar
+
+- **WHEN** se pulsa "Comenzar"
+- **THEN** la pantalla de inicio se cierra y se ve la vista en vivo con las tarjetas abajo y los hallazgos al lado
+
 ### Requirement: Pantalla única 16:9
 
 El dashboard SHALL ser una sola página con tema oscuro que ocupa la ventana completa en 16:9 sin scroll de página.
