@@ -19,12 +19,13 @@ La pantalla se proyecta durante la demo (16:9). Datos con la forma de `contracts
 ## Decisions
 
 - **CSS Grid a pantalla completa** (`100vh`, `overflow: hidden`): header arriba; frame ~60% a la izquierda; tarjetas y feed a la derecha. El feed tiene scroll interno si hace falta, la página nunca.
-- **Semáforo por `severidad`**, no por el número: `baja` verde, `media` amarillo, `alta` rojo (variables `--ok`, `--alerta`, `--peligro`). Así la regla vive en el agente, no se duplica.
+- **Paleta de marca: solo negro, amarillo y azul** (blanco solo para texto y vidrio), decisión de Daniela.
+- **Semáforo por `severidad`**, no por el número, dentro de esa paleta: `baja` azul, `media` amarillo en contorno, `alta` amarillo sólido con texto negro y brillo. Así la regla vive en el agente, no se duplica.
 - **Modo detectado** = `tipo` del hallazgo más reciente.
 - **Estados derivados:**
   - *Sin señal*: `estado_stream == "sin_senal"` → overlay sobre el frame.
   - *Analizando*: en vivo pero el `ultimo_frame` no cambió en el último ciclo, o aún no hay hallazgos.
-  - *Presupuesto agotado*: `costo_usd >= presupuesto_usd` → barra en rojo y aviso.
+  - *Presupuesto agotado*: `costo_usd >= presupuesto_usd` → barra y tarjeta de gasto en amarillo y aviso.
   - *Sin conexión*: el `fetch` falla → aviso discreto, se conservan los últimos datos.
   - Campos `null` → "—".
 - **Imagen**: `${API_URL}/${ultimo_frame}`; en mock no hay imágenes, se muestra un placeholder. Cambiar el `src` solo cuando cambia la ruta, para evitar parpadeo.

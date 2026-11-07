@@ -38,12 +38,12 @@ El dashboard SHALL mostrar el frame del último hallazgo en grande, ocupando cer
 
 ### Requirement: Tarjetas de indicadores
 
-El dashboard SHALL mostrar tarjetas con personas, % de estrés, frames analizados y una barra de gasto frente al presupuesto. La tarjeta de estrés MUST colorearse según `severidad`: baja verde, media amarillo, alta rojo.
+El dashboard SHALL mostrar tarjetas con personas, % de estrés, frames analizados y una barra de gasto frente al presupuesto. La tarjeta de estrés MUST colorearse según `severidad` usando solo la paleta de marca (negro, amarillo y azul): baja azul, media amarillo en contorno, alta amarillo sólido con texto negro.
 
 #### Scenario: Cultivo con severidad alta
 
 - **WHEN** el último hallazgo es de cultivo con `pct_estres` 37.4 y `severidad` `alta`
-- **THEN** la tarjeta de estrés muestra 37.4 % en rojo
+- **THEN** la tarjeta de estrés muestra 37.4 % en amarillo sólido (nivel alta)
 
 #### Scenario: Campos null
 
