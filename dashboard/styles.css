@@ -197,7 +197,6 @@ html, body {
 .hero.con-imagen .escena { animation: none; transform: none; z-index: -1; }
 .hero.con-imagen .aguila,
 .hero.con-imagen .iris,
-.hero.con-imagen .pupila,
 .hero.con-imagen .foco { display: none; }
 
 @keyframes deriva {
@@ -217,24 +216,6 @@ html, body {
   background: radial-gradient(circle, var(--amarillo) 0 72%, rgba(255, 200, 0, 0) 100%);
   mix-blend-mode: multiply;
   pointer-events: none;
-}
-
-/* Pupila: se dilata y se contrae al enfocar (mismo ciclo que el visor) */
-.pupila {
-  position: absolute;
-  /* centrado con calc (no con translate) para que `scale` crezca desde el centro del ojo */
-  left: calc(var(--ojo-x) - var(--ojo-r) * 0.55); top: calc(var(--ojo-y) - var(--ojo-r) * 0.55);
-  width: calc(var(--ojo-r) * 1.1); height: calc(var(--ojo-r) * 1.1);
-  border-radius: 50%;
-  background: radial-gradient(circle, #000 0 80%, rgba(0, 0, 0, 0) 100%);
-  animation: dilatar 3.6s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes dilatar {
-  0%   { scale: 1.45; }
-  12%  { scale: 1; }
-  85%  { scale: 1.02; }
-  100% { scale: 1.45; }
 }
 
 /* Foco: oscurece todo menos el ojo */
@@ -592,7 +573,7 @@ html, body {
 
 /* Quien pide menos movimiento en su sistema no ve animaciones */
 @media (prefers-reduced-motion: reduce) {
-  .escena, .visor-ojo, .pupila, .item.nuevo, #pill-stream .punto, .hud .rec::before {
+  .escena, .visor-ojo, .item.nuevo, #pill-stream .punto, .hud .rec::before {
     animation: none !important;
   }
 }
