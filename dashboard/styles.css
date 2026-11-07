@@ -171,19 +171,41 @@ html, body {
   --ojo-r: 3.5rem;
 }
 
-.hero .aguila,
+/* Escena del águila: todo lo que está pegado al ojo vive aquí y se mueve junto
+   (deriva lenta tipo cámara). El visor nunca se separa del ojo. */
+.escena {
+  position: absolute; inset: 0;
+  z-index: -3;
+  transform-origin: var(--ojo-x) var(--ojo-y);
+  animation: deriva 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+.escena .aguila {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: 64% 42%; /* igual que POS en app.js */
+}
 .hero .foto {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
   z-index: -3;
+  display: none;
 }
-.hero .aguila { object-position: 64% 42%; } /* igual que POS en app.js */
-.hero .foto { display: none; }
 .hero.con-imagen .foto { display: block; }
+.hero.con-imagen .escena { animation: none; transform: none; z-index: -1; }
 .hero.con-imagen .aguila,
 .hero.con-imagen .iris,
+.hero.con-imagen .pupila,
 .hero.con-imagen .foco { display: none; }
+
+@keyframes deriva {
+  0%   { transform: scale(1)    translate(0, 0); }
+  35%  { transform: scale(1.05) translate(-1.4%, 0.6%); }
+  70%  { transform: scale(1.03) translate(0.8%, -0.8%); }
+  100% { transform: scale(1.06) translate(-0.4%, 1%); }
+}
 
 /* Tinte amarillo sobre el iris (multiply: la pupila sigue negra) */
 .iris {
@@ -194,8 +216,25 @@ html, body {
   border-radius: 50%;
   background: radial-gradient(circle, var(--amarillo) 0 72%, rgba(255, 200, 0, 0) 100%);
   mix-blend-mode: multiply;
-  z-index: -2;
   pointer-events: none;
+}
+
+/* Pupila: se dilata y se contrae al enfocar (mismo ciclo que el visor) */
+.pupila {
+  position: absolute;
+  /* centrado con calc (no con translate) para que `scale` crezca desde el centro del ojo */
+  left: calc(var(--ojo-x) - var(--ojo-r) * 0.55); top: calc(var(--ojo-y) - var(--ojo-r) * 0.55);
+  width: calc(var(--ojo-r) * 1.1); height: calc(var(--ojo-r) * 1.1);
+  border-radius: 50%;
+  background: radial-gradient(circle, #000 0 80%, rgba(0, 0, 0, 0) 100%);
+  animation: dilatar 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes dilatar {
+  0%   { scale: 1.45; }
+  12%  { scale: 1; }
+  85%  { scale: 1.02; }
+  100% { scale: 1.45; }
 }
 
 /* Foco: oscurece todo menos el ojo */
@@ -204,7 +243,6 @@ html, body {
   background: radial-gradient(circle at var(--ojo-x) var(--ojo-y),
               rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) calc(var(--ojo-r) * 2.2),
               rgba(0, 0, 0, 0.55) calc(var(--ojo-r) * 9));
-  z-index: -2;
   pointer-events: none;
 }
 
@@ -231,32 +269,26 @@ html, body {
 .glow-2 { width: 26%; height: 18%; left: 2%; top: -8%; opacity: 0.35; }
 .hero.con-imagen .glow { opacity: 0.18; }
 
-/* Palabra gigante de fondo (ref "BLUEBIRD") */
-.palabra-fondo {
-  position: absolute;
-  left: 0; right: 0; top: 4%;
-  text-align: center;
-  font-size: 9.4vw;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  white-space: nowrap;
-  color: var(--amarillo);
-  opacity: 0.1;
-  pointer-events: none;
-  z-index: -1;
-}
-.hero.con-imagen .palabra-fondo { opacity: 0.05; }
-
-/* Cuadro de enfoque amarillo justo encima del ojo */
+/* Cuadro de enfoque amarillo justo encima del ojo: entra enfocando, titila y suelta */
 .visor-ojo {
   position: absolute;
-  left: var(--ojo-x); top: var(--ojo-y);
+  /* centrado con calc (no con translate) para que `scale` enfoque desde el centro del ojo */
+  left: calc(var(--ojo-x) - var(--ojo-r) * 1.65); top: calc(var(--ojo-y) - var(--ojo-r) * 1.65);
   width: calc(var(--ojo-r) * 3.3); height: calc(var(--ojo-r) * 3.3);
-  transform: translate(-50%, -50%);
   pointer-events: none;
-  z-index: 0;
+  animation: enfocar 3.6s ease-out infinite;
 }
-.hero.con-imagen .visor-ojo { left: 50%; top: 45%; width: 7.5rem; height: 7.5rem; }
+@keyframes enfocar {
+  0%   { scale: 1.4; opacity: 0; }
+  12%  { scale: 1;   opacity: 1; }
+  18%  { opacity: 0.15; }
+  24%  { opacity: 1; }
+  30%  { opacity: 0.15; }
+  36%  { opacity: 1; }
+  85%  { scale: 1;   opacity: 1; }
+  100% { scale: 1.4; opacity: 0; }
+}
+.hero.con-imagen .visor-ojo { left: calc(50% - 3.75rem); top: calc(45% - 3.75rem); width: 7.5rem; height: 7.5rem; }
 .visor-ojo i { position: absolute; width: 28%; height: 28%; border: 0 solid var(--amarillo); }
 .visor-ojo i:nth-child(1) { top: 0; left: 0; border-top-width: 3px; border-left-width: 3px; }
 .visor-ojo i:nth-child(2) { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; }
@@ -557,3 +589,10 @@ html, body {
   font-weight: 900;
 }
 .pill[hidden] { display: none; }
+
+/* Quien pide menos movimiento en su sistema no ve animaciones */
+@media (prefers-reduced-motion: reduce) {
+  .escena, .visor-ojo, .pupila, .item.nuevo, #pill-stream .punto, .hud .rec::before {
+    animation: none !important;
+  }
+}
