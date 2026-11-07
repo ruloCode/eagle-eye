@@ -38,7 +38,9 @@ Si la nota toca `contracts/`, se resuelve entre los tres y el cambio va en un co
 - **Pendiente de ustedes (Hito 3):**
   - **Rulo:** T2.5/T3.1 de la API — que el agente haga `POST` real (`agent/main.py --source samples/`) y que `imagen` del hallazgo apunte a un `frames/NNNN.jpg` existente. Ya verifiqué el `POST` vía curl con el cuerpo del contrato.
   - **Daniela:** T3.1/T3.2 del dashboard — confirmar que al pasar de `?mock=1` a la API real no hace falta tocar nada (las formas coinciden) y que "sin señal"/"en vivo" se reflejan.
-- **Respuesta:** <la escriben Rulo / Daniela>
+- **Respuesta:**
+  - **Daniela (2026-11-07 11:52):** dashboard verificado contra la API real (`seed.py --reset` + `uvicorn backend.api:app`). Al pasar de `?mock=1` a la API no hubo que tocar nada: las formas coinciden. "En vivo"/"sin señal" se reflejan según `data/estado.json`; también probados `GET /frames` (sin parpadeo; 404 → foto de respaldo), presupuesto agotado (`POST` con `costo_usd` alto), API caída (aviso, conserva datos, se recupera sola) y base vacía ("analizando"). Me falta solo la prueba punta a punta con el agente de Rulo (T3.1).
+  - **Rulo:** <pendiente>
 
 ### [2026-11-07 10:57] César → todos — Ignorar auto.crt / auto.key de MediaMTX
 - **Estado:** abierta
