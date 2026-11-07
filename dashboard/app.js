@@ -73,9 +73,9 @@ function pintarFrame(estado, hallazgos) {
   $("hud-hora").textContent = ultimo?.hora ?? "--:--:--";
   $("hud-tipo").textContent = ultimo ? ultimo.tipo.toUpperCase() : "";
   $("hud-ruta").textContent = ruta ?? VACIO;
-  $("txt-placeholder").textContent = MOCK
-    ? "Cero puntos ciegos · datos de prueba"
-    : ruta ? "Cero puntos ciegos" : "Esperando frame del dron…";
+  $("txt-espera").textContent = MOCK
+    ? "Datos de prueba · sin video real"
+    : ruta ? "Imagen no disponible" : "Esperando video del dron…";
 
   if (src === srcActual) return;
   srcActual = src;
@@ -205,7 +205,7 @@ function pintarFeed(hallazgos) {
 const OJO = { x: 0.64, y: 0.42, r: 0.0556 };
 const POS = { x: 0.64, y: 0.42 };
 function ubicarOjo() {
-  const hero = $("frame");
+  const hero = $("intro");
   const img = $("aguila");
   if (!img?.naturalWidth) return;
   const cw = hero.clientWidth;
@@ -222,8 +222,52 @@ function ubicarOjo() {
 }
 $("aguila").addEventListener("load", ubicarOjo);
 $("aguila").addEventListener("error", (e) => e.target.remove());
-new ResizeObserver(ubicarOjo).observe($("frame"));
+new ResizeObserver(ubicarOjo).observe($("intro"));
 ubicarOjo();
+
+// (0) Inicio → vista en vivo. "Comenzar" hace zoom al ojo y muestra el dashboard.
+//     #vivo en la URL abre directo la vista en vivo; el logo del nav vuelve al inicio.
+const SALIDA_MS = 1000;
+function mostrarVivo(animar) {
+  const intro = $("intro");
+  if (intro.hidden) return;
+  if (location.hash !== "#vivo") history.replaceState(null, "", "#vivo");
+  if (!animar || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    intro.hidden = true;
+    return;
+  }
+  intro.classList.add("saliendo");
+  setTimeout(() => {
+    intro.hidden = true;
+    intro.classList.remove("saliendo");
+  }, SALIDA_MS);
+}
+function mostrarInicio() {
+  history.replaceState(null, "", location.pathname + location.search);
+  $("intro").hidden = false;
+  ubicarOjo();
+}
+$("btn-comenzar").addEventListener("click", () => mostrarVivo(true));
+$("btn-inicio").addEventListener("click", mostrarInicio);
+if (location.hash === "#vivo") mostrarVivo(false);
+
+// Estado del sistema en la pantalla de inicio (API y dron), para saber si ya se puede comenzar.
+function pintarChip(id, ok, texto) {
+  const chip = $(id);
+  chip.classList.toggle("ok", ok === true);
+  chip.classList.toggle("mal", ok === false);
+  chip.lastChild.textContent = texto;
+}
+function pintarInicio(estado) {
+  $("intro-mock").hidden = !MOCK;
+  if (estado === null) {
+    pintarChip("intro-api", false, "API sin conexión");
+    return;
+  }
+  pintarChip("intro-api", true, MOCK ? "Datos de prueba" : "API conectada");
+  const enVivo = estado?.estado_stream === "en_vivo";
+  pintarChip("intro-dron", enVivo, enVivo ? "Dron en vivo" : "Dron sin señal");
+}
 
 // API caída: aviso discreto, se conservan los últimos datos y el polling sigue.
 // El error se registra una sola vez por racha para no llenar la consola.
@@ -235,6 +279,7 @@ async function tick() {
     if (enRachaDeError) console.info("[eagle-eye] conexión recuperada");
     enRachaDeError = false;
     $("pill-conexion").hidden = true;
+    pintarInicio(estado);
     pintarHeader(estado, lista);
     pintarFrame(estado, lista);
     pintarEstados(estado, lista);
@@ -244,6 +289,7 @@ async function tick() {
     if (!enRachaDeError) console.warn("[eagle-eye] sin conexión con la API:", err.message);
     enRachaDeError = true;
     $("pill-conexion").hidden = false;
+    pintarInicio(null);
   }
 }
 

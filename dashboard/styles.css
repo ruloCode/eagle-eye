@@ -95,6 +95,9 @@ html, body {
   letter-spacing: -0.03em;
 }
 .logo .palabra { display: inline-flex; align-items: baseline; }
+.logo-boton { background: none; border: 0; padding: 0; font-family: inherit; color: var(--amarillo); cursor: pointer; }
+.logo-boton:focus-visible { outline: 3px solid var(--azul); outline-offset: 4px; border-radius: 0.3rem; }
+.logo .g-ojo use { color: inherit; }
 /* La G de EAGLE es un ojo de águila (SVG del alto de las mayúsculas) */
 .logo .g-ojo {
   height: 0.74em;
@@ -151,25 +154,37 @@ html, body {
   100% { box-shadow: 0 0 0 0.6rem rgba(255, 255, 255, 0); }
 }
 
-/* ---------- (2) Hero / frame ----------
-   Capas absolutas (foto, sombra, glow, palabra, visor) + contenido en columna
-   (hud arriba, titular al medio, tarjetas abajo) para que nada se monte ni se recorte. */
+/* ---------- (0) Inicio ----------
+   Lo primero que se ve: el ojo de águila, el visor que enfoca y el botón "Comenzar".
+   Al comenzar, la cámara entra al ojo (zoom) y se desvanece hacia la vista en vivo. */
 
-.hero {
-  position: relative;
-  min-height: 0;
-  border-radius: var(--radio);
-  overflow: hidden;
+.intro {
+  position: fixed; inset: 0;
+  z-index: 20;
   background: var(--negro);
   isolation: isolate;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 1.3rem 1.4rem 1.4rem;
+  padding: 1.5rem 2.2rem 1.6rem;
   /* --ojo-x/--ojo-y/--ojo-r los calcula app.js según el tamaño real de la foto */
   --ojo-x: 64%;
   --ojo-y: 42%;
   --ojo-r: 3.5rem;
+  transition: opacity 0.5s ease 0.5s;
 }
+.intro[hidden] { display: none; }
+.intro.saliendo { opacity: 0; pointer-events: none; }
+.intro.saliendo .escena {
+  animation: none;
+  transform: scale(6);
+  transition: transform 1s cubic-bezier(0.7, 0, 0.2, 1);
+}
+.intro.saliendo .intro-top,
+.intro.saliendo .titular,
+.intro.saliendo .intro-pie,
+.intro.saliendo .glow,
+.intro.saliendo .sombra { opacity: 0; transition: opacity 0.3s ease; }
 
 /* Escena del águila: todo lo que está pegado al ojo vive aquí y se mueve junto
    (deriva lenta tipo cámara). El visor nunca se separa del ojo. */
@@ -186,18 +201,6 @@ html, body {
   object-fit: cover;
   object-position: 64% 42%; /* igual que POS en app.js */
 }
-.hero .foto {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  z-index: -3;
-  display: none;
-}
-.hero.con-imagen .foto { display: block; }
-.hero.con-imagen .escena { animation: none; transform: none; z-index: -1; }
-.hero.con-imagen .aguila,
-.hero.con-imagen .iris,
-.hero.con-imagen .foco { display: none; }
 
 @keyframes deriva {
   0%   { transform: scale(1)    translate(0, 0); }
@@ -227,12 +230,12 @@ html, body {
   pointer-events: none;
 }
 
-/* Sombra a la izquierda y abajo para leer el titular y las tarjetas */
+/* Sombra a la izquierda y abajo para leer el titular */
 .sombra {
   position: absolute; inset: 0;
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 30%, rgba(0, 0, 0, 0) 52%),
-    linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 34%);
+    linear-gradient(0deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 28%);
   z-index: -2;
 }
 
@@ -246,11 +249,10 @@ html, body {
   pointer-events: none;
   z-index: -1;
 }
-.glow-1 { width: 34%; height: 50%; left: -14%; bottom: -14%; opacity: 0.5; }
-.glow-2 { width: 26%; height: 18%; left: 2%; top: -8%; opacity: 0.35; }
-.hero.con-imagen .glow { opacity: 0.18; }
+.glow-1 { width: 30%; height: 50%; left: -12%; bottom: -14%; opacity: 0.5; }
+.glow-2 { width: 24%; height: 18%; left: 2%; top: -8%; opacity: 0.35; }
 
-/* Cuadro de enfoque amarillo justo encima del ojo: entra enfocando, titila y suelta */
+/* Visor amarillo justo encima del ojo: entra enfocando, titila y suelta */
 .visor-ojo {
   position: absolute;
   /* centrado con calc (no con translate) para que `scale` enfoque desde el centro del ojo */
@@ -269,13 +271,12 @@ html, body {
   85%  { scale: 1;   opacity: 1; }
   100% { scale: 1.4; opacity: 0; }
 }
-.hero.con-imagen .visor-ojo { left: calc(50% - 3.75rem); top: calc(45% - 3.75rem); width: 7.5rem; height: 7.5rem; }
-.visor-ojo i { position: absolute; width: 28%; height: 28%; border: 0 solid var(--amarillo); }
-.visor-ojo i:nth-child(1) { top: 0; left: 0; border-top-width: 3px; border-left-width: 3px; }
-.visor-ojo i:nth-child(2) { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; }
-.visor-ojo i:nth-child(3) { bottom: 0; right: 0; border-bottom-width: 3px; border-right-width: 3px; }
-.visor-ojo i:nth-child(4) { bottom: 0; left: 0; border-bottom-width: 3px; border-left-width: 3px; }
-.visor-ojo b {
+.visor-ojo i, .visor-centro i { position: absolute; width: 28%; height: 28%; border: 0 solid var(--amarillo); }
+.visor-ojo i:nth-child(1), .visor-centro i:nth-child(1) { top: 0; left: 0; border-top-width: 3px; border-left-width: 3px; }
+.visor-ojo i:nth-child(2), .visor-centro i:nth-child(2) { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; }
+.visor-ojo i:nth-child(3), .visor-centro i:nth-child(3) { bottom: 0; right: 0; border-bottom-width: 3px; border-right-width: 3px; }
+.visor-ojo i:nth-child(4), .visor-centro i:nth-child(4) { bottom: 0; left: 0; border-bottom-width: 3px; border-left-width: 3px; }
+.visor-ojo b, .visor-centro b {
   position: absolute; left: 50%; top: 50%;
   width: 0.5rem; height: 0.5rem; border-radius: 50%;
   background: var(--amarillo);
@@ -291,6 +292,148 @@ html, body {
   color: var(--amarillo);
   white-space: nowrap;
 }
+
+.intro-top {
+  position: relative;
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+}
+.intro .logo { font-size: 2.5rem; }
+.intro-estado { display: flex; align-items: center; gap: 0.5rem; }
+.chip-estado {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--vidrio-borde);
+  background: var(--vidrio);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blanco-70);
+}
+.chip-estado i { width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--blanco-45); }
+.chip-estado.ok { color: var(--blanco); }
+.chip-estado.ok i { background: var(--azul); box-shadow: 0 0 0.6rem var(--azul); }
+.chip-estado.mal { color: var(--amarillo); border-color: var(--amarillo); }
+.chip-estado.mal i { background: var(--amarillo); }
+
+.titular {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  max-width: 46%;
+}
+.titular h1 {
+  font-size: clamp(2.2rem, 7.4vh, 4.8rem);
+  line-height: 1.02;
+  color: var(--blanco);
+}
+.titular .regular { font-weight: 300; }
+.titular .amp { color: var(--amarillo); font-weight: 300; }
+.titular .sub {
+  margin-top: 1rem;
+  font-family: var(--mono);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: var(--amarillo);
+}
+
+.btn-comenzar {
+  margin-top: 2.2rem;
+  display: inline-flex; align-items: center; gap: 1.1rem;
+  padding: 0.55rem 0.6rem 0.55rem 1.9rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--amarillo);
+  color: var(--negro);
+  font-family: var(--sans-black);
+  font-weight: 900;
+  font-size: 1.3rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 0 2.4rem rgba(255, 200, 0, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-comenzar:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 0 3.4rem rgba(255, 200, 0, 0.7); }
+.btn-comenzar:active { transform: scale(0.98); }
+.btn-comenzar:focus-visible { outline: 3px solid var(--azul); outline-offset: 4px; }
+.btn-flecha {
+  width: 2.7rem; height: 2.7rem;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--negro);
+  color: var(--amarillo);
+  font-size: 1.25rem;
+  transition: transform 0.2s ease;
+}
+.btn-comenzar:hover .btn-flecha { transform: translateX(3px); }
+
+.intro-pie {
+  position: relative;
+  display: flex; gap: 2.2rem; flex-wrap: wrap;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--blanco-70);
+}
+.intro-pie span::before { content: "■ "; color: var(--amarillo); }
+
+/* ---------- (2) Hero: vista en vivo ----------
+   Video del dron de fondo + contenido en columna (hud arriba, tarjetas abajo). */
+
+.hero {
+  position: relative;
+  min-height: 0;
+  border-radius: var(--radio);
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 45%, #07142e 0%, var(--negro) 72%);
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  padding: 1.3rem 1.4rem 1.4rem;
+}
+.hero .foto {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: -3;
+  display: none;
+}
+.hero.con-imagen .foto { display: block; }
+
+/* Sin video todavía: retícula de cámara y visor esperando */
+.espera {
+  position: absolute; inset: 0;
+  z-index: -2;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1.3rem;
+  background-image:
+    linear-gradient(rgba(45, 107, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45, 107, 255, 0.08) 1px, transparent 1px);
+  background-size: 3rem 3rem;
+}
+.hero.con-imagen .espera { display: none; }
+.visor-centro { position: relative; width: 8rem; height: 8rem; animation: enfocar 3.6s ease-out infinite; }
+.espera p { font-family: var(--mono); font-size: 0.95rem; letter-spacing: 0.06em; color: var(--amarillo); }
+
+.sombra-vivo {
+  position: absolute; inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(0deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 32%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0) 16%);
+  pointer-events: none;
+}
+.relleno { flex: 1; min-height: 0; }
 
 .hud {
   position: relative;
@@ -350,8 +493,7 @@ html, body {
   background: var(--amarillo); border-color: var(--amarillo); color: var(--negro);
   box-shadow: 0 0 2.4rem rgba(255, 200, 0, 0.45);
 }
-.hero.sin-senal .foto,
-.hero.sin-senal .aguila { filter: grayscale(1) brightness(0.45); }
+.hero.sin-senal .foto { filter: grayscale(1) brightness(0.45); }
 
 .hud .rec { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--blanco); font-weight: 700; }
 .hud .rec::before {
@@ -360,32 +502,6 @@ html, body {
   animation: parpadeo 1.2s steps(2, start) infinite;
 }
 @keyframes parpadeo { to { visibility: hidden; } }
-
-.titular {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  max-width: 50%;
-  padding-left: 0.8rem;
-}
-.titular h2 {
-  font-size: clamp(1.8rem, 5.2vh, 3.3rem);
-  line-height: 1.04;
-  color: var(--blanco);
-}
-.titular .regular { font-weight: 300; }
-.titular .amp { color: var(--amarillo); font-weight: 300; }
-.titular .sub {
-  margin-top: 0.9rem;
-  font-family: var(--mono);
-  font-size: 0.95rem;
-  letter-spacing: 0.04em;
-  color: var(--amarillo);
-}
-.hero.con-imagen .titular { visibility: hidden; }
 
 /* ---------- (3) Tarjetas de vidrio ---------- */
 
@@ -573,7 +689,7 @@ html, body {
 
 /* Quien pide menos movimiento en su sistema no ve animaciones */
 @media (prefers-reduced-motion: reduce) {
-  .escena, .visor-ojo, .item.nuevo, #pill-stream .punto, .hud .rec::before {
+  .escena, .visor-ojo, .visor-centro, .item.nuevo, #pill-stream .punto, .hud .rec::before {
     animation: none !important;
   }
 }
