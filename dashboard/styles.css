@@ -1,39 +1,486 @@
 /* Eagle Eye — dashboard. Dueña: Daniela.
-   Tema oscuro, 16:9, sin scroll. */
+   16:9, sin scroll. Paleta: SOLO negro, amarillo y azul (blanco solo para texto y vidrio).
+   Orden inspirado en las refes: hero con el ojo de águila, palabra gigante de fondo,
+   titular a la izquierda y tarjetas de vidrio abajo; feed a la derecha.
+   Tipografía sans-serif del sistema: Black (900), Regular (400) y Black en contorno. */
 
 :root {
-  /* TODO(daniela): paleta final */
-  --bg: #0b0f14;
-  --panel: #131a22;
-  --texto: #e6edf3;
-  --texto-suave: #8b98a5;
-  --ok: #3fb950;      /* severidad baja  */
-  --alerta: #d29922;  /* severidad media */
-  --peligro: #f85149; /* severidad alta  */
-  --gap: 16px;
+  --negro: #000;
+  --negro-2: #0a0a0a;
+  --amarillo: #ffc800;
+  --azul: #2d6bff;
+  --blanco: #fff;
+  --blanco-70: rgba(255, 255, 255, 0.7);
+  --blanco-45: rgba(255, 255, 255, 0.45);
+  --vidrio: rgba(0, 0, 0, 0.38);
+  --vidrio-borde: rgba(255, 255, 255, 0.16);
+
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI",
+          Roboto, "Helvetica Neue", Arial, sans-serif;
+  --sans-black: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI Black",
+                "Segoe UI", Roboto, "Arial Black", sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --gap: 1rem;
+  --radio: 1.6rem;
 }
+
+html { font-size: clamp(13px, 1.04vw, 24px); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
   height: 100%;
-  overflow: hidden; /* sin scroll */
-  background: var(--bg);
-  color: var(--texto);
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  overflow: hidden;
+  background: var(--negro);
+  color: var(--blanco);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* TODO(daniela): layout. Sugerencia de grid:
-   header arriba a todo el ancho; frame ~60% a la izquierda;
-   tarjetas + feed a la derecha; el feed con overflow interno, nunca la página. */
+/* ---------- Tipografía ---------- */
+
+.black { font-family: var(--sans-black); font-weight: 900; letter-spacing: -0.02em; }
+.regular { font-weight: 400; letter-spacing: -0.01em; }
+.contorno {
+  font-family: var(--sans-black);
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  /* trazo doble + relleno del color del fondo encima: tapa las líneas internas de la fuente */
+  color: var(--relleno, var(--negro));
+  -webkit-text-stroke: calc(var(--trazo, 0.05em) * 2) var(--tinta, var(--amarillo));
+  paint-order: stroke fill;
+}
+.etiqueta {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--blanco-70);
+}
+
+/* ---------- Layout ---------- */
+
 .app {
   height: 100vh;
   display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); /* hero ~63 % */
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "nav  nav"
+    "hero feed";
   gap: var(--gap);
-  padding: var(--gap);
+  padding: var(--gap) calc(var(--gap) * 1.25) calc(var(--gap) * 1.25);
+}
+.nav  { grid-area: nav; }
+.hero { grid-area: hero; }
+.feed { grid-area: feed; }
+
+/* ---------- (1) Nav ---------- */
+
+.nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0.15rem 0.2rem;
 }
 
-.header {}
-.frame {}
-.tarjetas {}
-.feed {}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 2.1rem;
+  line-height: 1;
+  color: var(--amarillo);
+  letter-spacing: -0.03em;
+}
+.logo .palabra { display: inline-flex; align-items: baseline; }
+/* La G de EAGLE es un ojo de águila (SVG del alto de las mayúsculas) */
+.logo .g-ojo {
+  height: 0.74em;
+  width: auto;
+  margin: 0 0.015em;
+  align-self: center;
+  overflow: visible;
+}
+.logo .bloque {
+  background: var(--amarillo);
+  color: var(--negro);
+  padding: 0.08em 0.22em 0.04em;
+  border-radius: 0.18em;
+}
+
+.pills {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.3rem;
+  border-radius: 999px;
+  border: 1px solid var(--vidrio-borde);
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.pill .black { letter-spacing: 0.04em; }
+#pill-stream { background: var(--azul); font-family: var(--sans-black); font-weight: 900; }
+#pill-stream .punto {
+  width: 0.55rem; height: 0.55rem; border-radius: 50%;
+  background: var(--blanco);
+  animation: latido 1.6s ease-out infinite;
+}
+#pill-stream.sin-senal { background: transparent; box-shadow: inset 0 0 0 2px var(--amarillo); color: var(--amarillo); }
+#pill-stream.sin-senal .punto { background: var(--amarillo); animation: none; }
+#txt-modo { color: var(--amarillo); }
+
+.pill-amarilla {
+  justify-self: end;
+  background: var(--amarillo);
+  color: var(--negro);
+  font-family: var(--sans-black);
+  font-weight: 900;
+}
+
+@keyframes latido {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8); }
+  100% { box-shadow: 0 0 0 0.6rem rgba(255, 255, 255, 0); }
+}
+
+/* ---------- (2) Hero / frame ----------
+   Capas absolutas (foto, sombra, glow, palabra, visor) + contenido en columna
+   (hud arriba, titular al medio, tarjetas abajo) para que nada se monte ni se recorte. */
+
+.hero {
+  position: relative;
+  min-height: 0;
+  border-radius: var(--radio);
+  overflow: hidden;
+  background: var(--negro);
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  padding: 1.3rem 1.4rem 1.4rem;
+  /* --ojo-x/--ojo-y/--ojo-r los calcula app.js según el tamaño real de la foto */
+  --ojo-x: 64%;
+  --ojo-y: 42%;
+  --ojo-r: 3.5rem;
+}
+
+.hero .aguila,
+.hero .foto {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: -3;
+}
+.hero .aguila { object-position: 64% 42%; } /* igual que POS en app.js */
+.hero .foto { display: none; }
+.hero.con-imagen .foto { display: block; }
+.hero.con-imagen .aguila,
+.hero.con-imagen .iris,
+.hero.con-imagen .foco { display: none; }
+
+/* Tinte amarillo sobre el iris (multiply: la pupila sigue negra) */
+.iris {
+  position: absolute;
+  left: var(--ojo-x); top: var(--ojo-y);
+  width: calc(var(--ojo-r) * 2); height: calc(var(--ojo-r) * 2);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--amarillo) 0 72%, rgba(255, 200, 0, 0) 100%);
+  mix-blend-mode: multiply;
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* Foco: oscurece todo menos el ojo */
+.foco {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--ojo-x) var(--ojo-y),
+              rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) calc(var(--ojo-r) * 2.2),
+              rgba(0, 0, 0, 0.55) calc(var(--ojo-r) * 9));
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* Sombra a la izquierda y abajo para leer el titular y las tarjetas */
+.sombra {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 30%, rgba(0, 0, 0, 0) 52%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 34%);
+  z-index: -2;
+}
+
+/* Resplandor amarillo (ref "20/20 VISION") */
+.glow {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--amarillo);
+  filter: blur(5rem);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: -1;
+}
+.glow-1 { width: 34%; height: 50%; left: -14%; bottom: -14%; opacity: 0.5; }
+.glow-2 { width: 26%; height: 18%; left: 2%; top: -8%; opacity: 0.35; }
+.hero.con-imagen .glow { opacity: 0.18; }
+
+/* Palabra gigante de fondo (ref "BLUEBIRD") */
+.palabra-fondo {
+  position: absolute;
+  left: 0; right: 0; top: 4%;
+  text-align: center;
+  font-size: 9.4vw;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  color: var(--amarillo);
+  opacity: 0.1;
+  pointer-events: none;
+  z-index: -1;
+}
+.hero.con-imagen .palabra-fondo { opacity: 0.05; }
+
+/* Cuadro de enfoque amarillo justo encima del ojo */
+.visor-ojo {
+  position: absolute;
+  left: var(--ojo-x); top: var(--ojo-y);
+  width: calc(var(--ojo-r) * 3.3); height: calc(var(--ojo-r) * 3.3);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero.con-imagen .visor-ojo { left: 50%; top: 45%; width: 7.5rem; height: 7.5rem; }
+.visor-ojo i { position: absolute; width: 28%; height: 28%; border: 0 solid var(--amarillo); }
+.visor-ojo i:nth-child(1) { top: 0; left: 0; border-top-width: 3px; border-left-width: 3px; }
+.visor-ojo i:nth-child(2) { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; }
+.visor-ojo i:nth-child(3) { bottom: 0; right: 0; border-bottom-width: 3px; border-right-width: 3px; }
+.visor-ojo i:nth-child(4) { bottom: 0; left: 0; border-bottom-width: 3px; border-left-width: 3px; }
+.visor-ojo b {
+  position: absolute; left: 50%; top: 50%;
+  width: 0.5rem; height: 0.5rem; border-radius: 50%;
+  background: var(--amarillo);
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0.8rem var(--amarillo);
+}
+.visor-ojo span {
+  position: absolute; left: 100%; top: 0;
+  margin-left: 0.6rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--amarillo);
+  white-space: nowrap;
+}
+
+.hud {
+  position: relative;
+  display: flex; justify-content: space-between; gap: 1rem;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  color: var(--blanco-70);
+  text-transform: uppercase;
+}
+.hud .rec { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--blanco); font-weight: 700; }
+.hud .rec::before {
+  content: ""; width: 0.55rem; height: 0.55rem; border-radius: 50%;
+  background: var(--amarillo);
+  animation: parpadeo 1.2s steps(2, start) infinite;
+}
+@keyframes parpadeo { to { visibility: hidden; } }
+
+.titular {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 50%;
+  padding-left: 0.8rem;
+}
+.titular h2 {
+  font-size: clamp(1.8rem, 5.2vh, 3.3rem);
+  line-height: 1.04;
+  color: var(--blanco);
+}
+.titular .regular { font-weight: 300; }
+.titular .amp { color: var(--amarillo); font-weight: 300; }
+.titular .sub {
+  margin-top: 0.9rem;
+  font-family: var(--mono);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  color: var(--amarillo);
+}
+.hero.con-imagen .titular { visibility: hidden; }
+
+/* ---------- (3) Tarjetas de vidrio ---------- */
+
+.tarjetas {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.vidrio {
+  background: var(--vidrio);
+  border: 1px solid var(--vidrio-borde);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+}
+
+.tarjeta {
+  --acento: var(--blanco);
+  position: relative;
+  min-width: 0;
+  min-height: 7rem;
+  border-radius: 1.3rem;
+  padding: 0.85rem 1rem 0.95rem;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.3s, border-color 0.3s;
+}
+.tarjeta .etiqueta {
+  padding-right: 2rem;   /* espacio para la flecha: el texto no se monta */
+  letter-spacing: 0.12em;
+  line-height: 1.3;
+}
+.tarjeta .flecha {
+  position: absolute; top: 0.7rem; right: 0.7rem;
+  width: 1.6rem; height: 1.6rem;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 0.75rem;
+}
+.tarjeta .numero {
+  margin-top: auto;
+  padding-top: 0.4rem;
+  font-size: 2.6rem;
+  line-height: 1;
+  color: var(--acento);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.tarjeta .numero small { font-size: 0.42em; font-weight: 400; margin-left: 0.08em; }
+.tarjeta .numero.vacio { color: var(--blanco-45); }
+.tarjeta .sev {
+  margin-top: 0.3rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--acento);
+}
+.tarjeta .sev:empty { display: none; }
+
+/* Severidad solo con la paleta */
+.tarjeta[data-sev="baja"]  { --acento: var(--azul); border-color: var(--azul); }
+.tarjeta[data-sev="media"] { --acento: var(--amarillo); border-color: var(--amarillo); }
+.tarjeta[data-sev="alta"]  {
+  --acento: var(--negro);
+  background: var(--amarillo);
+  border-color: var(--amarillo);
+  box-shadow: 0 0 2.4rem rgba(255, 200, 0, 0.45);
+}
+.tarjeta[data-sev="alta"] .etiqueta { color: var(--negro); }
+.tarjeta[data-sev="alta"] .flecha { background: var(--negro); color: var(--amarillo); }
+.tarjeta[data-sev="alta"] .sev { font-family: var(--sans-black); font-weight: 900; }
+
+.gasto .numero { font-size: 2rem; }
+.gasto .de { font-size: 0.72rem; color: var(--blanco-70); margin-top: 0.3rem; white-space: nowrap; }
+.barra {
+  margin-top: 0.5rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+.barra > span {
+  display: block; height: 100%;
+  width: var(--pct, 0%);
+  min-width: 0.4rem;
+  background: linear-gradient(90deg, var(--azul), var(--amarillo));
+  border-radius: inherit;
+  transition: width 0.6s ease;
+}
+
+/* ---------- (4) Feed ---------- */
+
+.feed {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--negro-2);
+  border: 1px solid var(--vidrio-borde);
+  border-radius: var(--radio);
+  overflow: hidden;
+}
+.feed-titulo {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem;
+  padding: 1rem 1.1rem 0.75rem;
+}
+.feed-titulo h2 { font-size: 1.55rem; line-height: 1; text-transform: uppercase; color: var(--amarillo); white-space: nowrap; }
+.feed-titulo h2 .contorno { --relleno: var(--negro-2); --trazo: 0.04em; }
+
+.lista {
+  list-style: none;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto; /* solo si llegan más de los que caben; la página nunca */
+  padding: 0 0.65rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.item {
+  --acento: var(--blanco-45);
+  flex-shrink: 0;
+  padding: 0.6rem 0.85rem 0.65rem;
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 4px solid var(--acento);
+}
+.item[data-sev="baja"]  { --acento: var(--azul); }
+.item[data-sev="media"] { --acento: var(--amarillo); }
+.item[data-sev="alta"]  { --acento: var(--amarillo); background: rgba(255, 200, 0, 0.1); }
+
+.item .meta { display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; }
+.item .hora { font-family: var(--mono); font-size: 0.75rem; color: var(--blanco-70); }
+.chip {
+  font-size: 0.58rem;
+  font-family: var(--sans-black);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+}
+.chip.tipo { color: var(--blanco); background: rgba(45, 107, 255, 0.25); box-shadow: inset 0 0 0 1.5px var(--azul); }
+.item[data-sev="baja"]  .chip.sev { background: var(--azul); color: var(--blanco); }
+.item[data-sev="media"] .chip.sev { color: var(--amarillo); box-shadow: inset 0 0 0 1.5px var(--amarillo); }
+.item[data-sev="alta"]  .chip.sev { background: var(--amarillo); color: var(--negro); }
+.item .dato {
+  margin-left: auto;
+  font-size: 1rem;
+  color: var(--acento);
+  font-variant-numeric: tabular-nums;
+}
+.item[data-sev="baja"] .dato { color: var(--azul); }
+
+.item .descripcion { margin-top: 0.35rem; font-size: 0.86rem; line-height: 1.28; }
+.item .recomendacion { margin-top: 0.2rem; font-size: 0.78rem; line-height: 1.28; color: var(--blanco-70); }
+.item .recomendacion::before { content: "→ "; color: var(--amarillo); font-weight: 900; }
+
+.vacio-feed { padding: 1.2rem 0.5rem; color: var(--blanco-70); }
