@@ -11,11 +11,11 @@ Solo se editan `backend/` y `scripts/`. Lo que haga falta de otras carpetas va e
 
 ## 2. Hito 2 (11:00) — se conecta con el contrato real
 
-- [ ] 2.1 Implementar `POST /hallazgos` con `jsonschema` Draft7Validator sobre `contracts/hallazgo.schema.json`; verificar 201 con un hallazgo del fixture (sin `id`) y 422 con un campo extra, un enum inválido, `descripcion` de 141 caracteres y sin `costo_usd`
-- [ ] 2.2 Implementar `GET /estado` (estado de `data/estado.json`, COUNT/SUM del vuelo, `PRESUPUESTO_USD`); verificar que la forma coincide con `contracts/fixtures/estado.sample.json` y que sin `estado.json` devuelve `sin_senal`
-- [ ] 2.3 Implementar `GET /frames/{archivo}` con protección de rutas; verificar 200 con un frame real, 404 con uno inexistente y 404 con `..`
-- [ ] 2.4 Verificar CORS: desde `http://localhost:5500/dashboard/` el navegador no muestra errores de CORS
-- [ ] 2.5 Probar `uv run python agent/main.py --source samples/ --una-vez` contra la API (o un `curl` con el mismo cuerpo); verificar que aparece en `GET /hallazgos`
+- [x] 2.1 Implementar `POST /hallazgos` con `jsonschema` Draft7Validator sobre `contracts/hallazgo.schema.json`; verificar 201 con un hallazgo del fixture (sin `id`) y 422 con un campo extra, un enum inválido, `descripcion` de 141 caracteres y sin `costo_usd`
+- [x] 2.2 Implementar `GET /estado` (estado de `data/estado.json`, COUNT/SUM del vuelo, `PRESUPUESTO_USD`); verificar que la forma coincide con `contracts/fixtures/estado.sample.json` y que sin `estado.json` devuelve `sin_senal`
+- [x] 2.3 Implementar `GET /frames/{archivo}` con protección de rutas; verificar 200 con un frame real, 404 con uno inexistente y 404 con `..`
+- [x] 2.4 Verificar CORS: desde `http://localhost:5500/dashboard/` el navegador no muestra errores de CORS
+- [x] 2.5 Probar `uv run python agent/main.py --source samples/ --una-vez` contra la API (o un `curl` con el mismo cuerpo); verificar que aparece en `GET /hallazgos` — verificado vía curl con el cuerpo del contrato (201 → aparece primero en GET /hallazgos). Prueba con el agente real de Rulo queda para el Hito 3 (integración), cuando exista `agent/`.
 
 ## 3. Hito 3 (11:50) — integración de punta a punta y pulido
 
